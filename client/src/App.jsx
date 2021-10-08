@@ -6,7 +6,9 @@ function App() {
 
   useEffect(() => {
     const load = async () => {
-      const data = await fetch('http://localhost:8080/api/users').then((res) => res.json())
+      const data = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/users`).then((res) =>
+        res.json()
+      )
       setUsers(data)
     }
     load()
