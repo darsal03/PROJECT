@@ -3,18 +3,35 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "start": "cross-env PORT=8080 nodemon ."
+    "start": "cross-env PORT=8080 nodemon ./src/index.js"
   },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "mongodb": "^4.1.3",
-    "mongoose": "^6.0.10"
+    "cors": "2.8.5",
+    "cross-env": "7.0.3",
+    "eslint": "7.32.0",
+    "eslint-config-prettier": "8.3.0",
+    "express": "4.17.1",
+    "mongodb": "4.1.3",
+    "mongoose": "6.0.10",
+    "nodemon": "2.0.13"
   },
-  "devDependencies": {
-    "cross-env": "^7.0.3",
-    "nodemon": "^2.0.13"
-  },
-  "type": "module"
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended",
+      "prettier"
+    ],
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "ignorePatterns": [
+      "node_modules"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 11,
+      "sourceType": "module"
+    }
+  }
 }

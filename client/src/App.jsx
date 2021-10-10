@@ -1,45 +1,32 @@
-import { useEffect, useState } from 'react'
+import { useUsers } from './hooks/use-users'
 import { Logo } from './components/svgs/logo'
 
 function App() {
-  const [users, setUsers] = useState([])
-
-  useEffect(() => {
-    const load = async () => {
-      const data = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/users`).then((res) =>
-        res.json()
-      )
-      setUsers(data)
-    }
-    load()
-  }, [])
+  const { data: users, error, isFetching } = useUsers()
 
   return (
     <div className="App">
       <header className="App-header">
-        <Logo width="200" height="200" />
+        <Logo width="100" height="100" />
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
           Learn React
         </a>
       </header>
       <section>
         <h2>Users</h2>
-        {users.length > 0 ? (
+        {isFetching ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p>{error}</p>
+        ) : (
           <ul>
             {users.map((user) => (
-              <li key={user.id}>{user.name}</li>
+              <li key={user.key}>{user.name}</li>
             ))}
           </ul>
-        ) : (
-          <p>No users...</p>
         )}
       </section>
     </div>
