@@ -1,5 +1,5 @@
 import express from 'express'
-import { getUser, getUsers } from './controllers/users.js'
+import { getUser, getUsers, handleRegister} from './controllers/users.js'
 
 export const router = express.Router()
 
@@ -8,3 +8,4 @@ export const router = express.Router()
  */
 router.get('/users', getUsers)
 router.get('/users/:id', getUser)
+router.post('/register',handleRegister)
