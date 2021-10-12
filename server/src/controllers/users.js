@@ -27,17 +27,16 @@ export const getUser = (req, res, next) => {
   }
 }
 
-export const handleRegister = (req,res) => {
-    
-    const {name} = req.body 
-    if (users.find(user => user.name === name )) {
-      return res.status(400).json({
-        msg:'this user already exists'
-      })
-    }else{
-      let user = {id:Math.random().toString(),name}
-      users.push(user)
-      console.log(users);
-    }
-  
+export const createUser = (req, res) => {
+  const { name } = req.body
+  const userFound = users.find((user) => user.name === name)
+  if (userFound) {
+    return res.status(400).json({
+      msg: 'this user already exists',
+    })
+  } else {
+    const user = { id: Math.random().toString(), name }
+    users.push(user)
+    console.log(users)
+  }
 }
