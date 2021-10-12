@@ -28,15 +28,17 @@ export const getUser = (req, res, next) => {
 }
 
 export const handleRegister = (req,res) => {
+    
     const {name} = req.body 
-
-    users.filter=(user =>{
-        if (user.name === name) {
-        return  res.status(400).json({
-            msg:"this user is already registered"
-          })
-        }else{
-          return [...users,{name,id:Date().toString}]
-        }
-    })
+    if (users.find(user => user.name === name )) {
+      return res.status(400).json({
+        msg:'this user already exists'
+      })
+    }else{
+      let user = {id:Date().toString,name}
+      const addUser = users.push(user)
+      console.log(addUser);
+      console.log(users);
+    }
+  
 }
