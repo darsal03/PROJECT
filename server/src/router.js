@@ -7,5 +7,5 @@ export const router = express.Router()
  * Users
  */
 router.get('/users', getUsers)
-router.post('/register', createUser)
+router.post('/users', createUser)
 router.get('/users/:id', getUser)
