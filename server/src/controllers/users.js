@@ -35,9 +35,8 @@ export const handleRegister = (req,res) => {
         msg:'this user already exists'
       })
     }else{
-      let user = {id:Date().toString,name}
-      const addUser = users.push(user)
-      console.log(addUser);
+      let user = {id:Math.random().toString(),name}
+      users.push(user)
       console.log(users);
     }
   
