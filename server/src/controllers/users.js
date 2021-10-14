@@ -54,13 +54,11 @@ export const createUser = async (req, res) => {
       email,
       hashedPassword,
     })
-
     if (newUser) {
       res.status(201).json({
         msg: 'registration was successful',
       })
     }
-
     console.log(newUser)
   } catch (error) {
     console.log(error)
