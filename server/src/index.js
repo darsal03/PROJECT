@@ -10,6 +10,10 @@ import mongoose from 'mongoose'
 
 import dotenv from 'dotenv'
 
+import session from 'express-session'
+
+import MongoStore from 'connect-mongo'
+
 dotenv.config()
 
 const app = express()
@@ -24,9 +28,26 @@ app.use('/api', router)
 app.use(globalErrorHandler)
 
 mongoose
-  .connect(process.env.DB_URL)
+  .connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('connected to DB'))
   .catch((err) => console.log(err))
+
+const sessionStore = new MongoStore({
+  mongoUrl: process.env.DB_URL,
+  collectionName: 'sessions',
+})
+
+app.use(
+  session({
+    secret: 'foo',
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,
+    },
+  })
+)
 
 const PORT = process.env.PORT || 8080
 app.listen(PORT, () => {
