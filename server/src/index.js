@@ -22,8 +22,6 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use(configCors)
 
-app.use('/api', router)
-
 // eslint-disable-next-line no-unused-vars
 app.use(globalErrorHandler)
 
@@ -39,15 +37,17 @@ const sessionStore = new MongoStore({
 
 app.use(
   session({
-    secret: 'foo',
+    secret: 'foo' || process.env.SECRET, //doesnt allow the env variable. error: express-session deprecated req.secret; provide secret option
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
+      path: '/api',
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
 )
+app.use('/api', router)
 
 const PORT = process.env.PORT || 8080
 app.listen(PORT, () => {
