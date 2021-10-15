@@ -2,39 +2,35 @@ import { users } from '../models/User.js'
 
 import bcrypt from 'bcrypt'
 
-const userArray = [
-  //is this array needed anymore?
-  { id: '1', name: 'Goga' },
-  { id: '2', name: 'Davit' },
-  { id: '3', name: 'Lazare' },
-]
-
-export const getUsers = (req, res, next) => {
-  //should i change this ?
+export const getUsers = async (req, res) => {
   try {
-    // access db or whatever
-    res.send(userArray)
-  } catch (err) {
-    next(err)
+    console.log(req.session)
+    const userArray = await users.find()
+    if (userArray) {
+      res.status(200).json({ userArray })
+    }
+  } catch (error) {
+    res.status(400).json({
+      msg: 'something went wrong',
+    })
   }
 }
 
-export const getUser = (req, res, next) => {
+export const getUser = async (req, res) => {
   try {
-    const user = userArray.find((user) => user.id === req.params.id)
-
+    const { id } = req.body.id
+    const user = await users.findOne({ _id: id })
     if (user) {
-      res.json(user)
-    } else {
-      res.status(400).json({ error: 'Thre is no user with such id' })
+      res.send(user)
     }
-  } catch (err) {
-    next(err)
+  } catch (error) {
+    console.log(error)
   }
 }
 
 export const createUser = async (req, res) => {
   try {
+    console.log(req.session)
     const { username, email, password } = req.body
     const userFound = await users.findOne({ username })
     const emailFound = await users.findOne({ email })
@@ -66,4 +62,24 @@ export const createUser = async (req, res) => {
       msg: 'something went wrong',
     })
   }
+}
+
+export const login = async (req, res) => {
+  console.log(req.session)
+  const { username, password } = req.body
+  const userFound = await users.findOne({ username })
+  const checkPassword = await bcrypt.compare(password, userFound.hashedPassword)
+  if (userFound && checkPassword) {
+    res.status(200).json({
+      msg: 'logged in',
+    })
+  } else {
+    res.status(500).json({
+      msg: 'login failed',
+    })
+  }
+}
+
+export const logout = async (req, res) => {
+  res.redirect('/api/users')
 }
