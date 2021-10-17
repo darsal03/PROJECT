@@ -2,44 +2,40 @@ import { users } from '../models/User.js'
 
 import bcrypt from 'bcrypt'
 
-export const getUsers = async (req, res) => {
+export const getUsers = async (req, res, next) => {
   try {
-    console.log(req.session)
-    const userArray = await users.find()
-    if (userArray) {
-      res.status(200).json({ userArray })
+    const users = await users.find()
+    if (users) {
+      res.status(200).json({ users })
     }
   } catch (error) {
-    res.status(400).json({
-      msg: 'something went wrong',
-    })
+    next(error)
   }
 }
 
-export const getUser = async (req, res) => {
+export const getUserById = async (req, res, next) => {
   try {
-    const { id } = req.body.id
+    const id = req.params.id
     const user = await users.findOne({ _id: id })
     if (user) {
       res.send(user)
     }
   } catch (error) {
-    console.log(error)
+    next(error)
   }
 }
 
-export const createUser = async (req, res) => {
+export const createUser = async (req, res, next) => {
   try {
-    console.log(req.session)
     const { username, email, password } = req.body
-    const userFound = await users.findOne({ username })
-    const emailFound = await users.findOne({ email })
-    if (userFound) {
+    const foundUser = await users.findOne({ username })
+    const foundEmail = await users.findOne({ email })
+    if (foundUser) {
       return res.status(400).json({
         msg: 'this username is already registered',
       })
     }
-    if (emailFound) {
+    if (foundEmail) {
       return res.status(400).json({
         msg: 'this email is already registered',
       })
@@ -55,31 +51,36 @@ export const createUser = async (req, res) => {
         msg: 'registration was successful',
       })
     }
-    console.log(newUser)
   } catch (error) {
-    console.log(error)
-    return res.status(500).json({
-      msg: 'something went wrong',
-    })
+    next(error)
   }
 }
 
-export const login = async (req, res) => {
-  console.log(req.session)
-  const { username, password } = req.body
-  const userFound = await users.findOne({ username })
-  const checkPassword = await bcrypt.compare(password, userFound.hashedPassword)
-  if (userFound && checkPassword) {
-    res.status(200).json({
-      msg: 'logged in',
-    })
-  } else {
-    res.status(500).json({
-      msg: 'login failed',
-    })
+export const login = async (req, res, next) => {
+  try {
+    const { username, password } = req.body
+    const foundUser = await users.findOne({ username })
+    const checkPassword = await bcrypt.compare(password, foundUser.hashedPassword)
+    if (foundUser && checkPassword) {
+      res.status(200).json({
+        msg: 'logged in',
+      })
+      req.session.userId = foundUser._id
+    } else {
+      return res.status(500).json({
+        msg: 'login failed',
+      })
+    }
+  } catch (error) {
+    next(error)
   }
 }
 
 export const logout = async (req, res) => {
-  res.redirect('/api/users')
+  req.session.destroy((err) => {
+    if (err) {
+      throw err
+    }
+    res.redirect('/login')
+  })
 }
