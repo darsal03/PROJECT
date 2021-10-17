@@ -42,7 +42,6 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      path: '/api',
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
