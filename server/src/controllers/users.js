@@ -62,12 +62,12 @@ export const login = async (req, res, next) => {
     const foundUser = await users.findOne({ username })
     const checkPassword = await bcrypt.compare(password, foundUser.hashedPassword)
     if (foundUser && checkPassword) {
+      req.session.userId = foundUser._id
       res.status(200).json({
         msg: 'logged in',
       })
-      req.session.userId = foundUser._id
     } else {
-      return res.status(500).json({
+      return res.status(400).json({
         msg: 'login failed',
       })
     }
@@ -76,11 +76,20 @@ export const login = async (req, res, next) => {
   }
 }
 
-export const logout = async (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      throw err
+export const logout = async (req, res, next) => {
+  try {
+    const foundUser = await users.findOne({ _id: req.session.userId })
+    if (foundUser) {
+      req.session.destroy((err) => {
+        if (err) {
+          throw err
+        }
+      })
     }
-    res.redirect('/login')
-  })
+    res.status(200).json({
+      msg: 'logged out',
+    })
+  } catch (error) {
+    next(error)
+  }
 }

@@ -23,12 +23,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use(configCors)
 
 // eslint-disable-next-line no-unused-vars
-app.use(globalErrorHandler)
-
-mongoose
-  .connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('connected to DB'))
-  .catch((err) => console.log(err))
 
 const sessionStore = new MongoStore({
   mongoUrl: process.env.DB_URL,
@@ -48,7 +42,14 @@ app.use(
 )
 app.use('/api', router)
 
+app.use(globalErrorHandler)
+
 const PORT = process.env.PORT || 8080
-app.listen(PORT, () => {
-  console.log(`Listening on http://localhost:${PORT} | ${new Date().toLocaleTimeString()} `)
-})
+mongoose
+  .connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Listening on http://localhost:${PORT} | ${new Date().toLocaleTimeString()} `)
+    })
+  })
+  .catch((err) => console.log(err))
