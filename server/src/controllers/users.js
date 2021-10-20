@@ -18,7 +18,7 @@ export const getUserById = async (req, res, next) => {
     const id = req.params.id
     const user = await users.findOne({ _id: id })
     if (user) {
-      res.send(user)
+      return res.status(200).json({ user: user })
     }
   } catch (error) {
     next(error)
