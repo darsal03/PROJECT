@@ -85,7 +85,7 @@ export const updateMeal = async (req, res, next) => {
   try {
     const id = req.params.id
     const updates = req.body
-    const updateMeal = await meals.findByIdAndUpdate(id, updates)
+    const updateMeal = await meals.findByIdAndUpdate(id, updates, { new: true })
     return res.status(200).json({ meal: updateMeal })
   } catch (error) {
     next(error)
