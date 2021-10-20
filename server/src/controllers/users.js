@@ -4,9 +4,9 @@ import bcrypt from 'bcrypt'
 
 export const getUsers = async (req, res, next) => {
   try {
-    const users = await users.find()
-    if (users) {
-      res.status(200).json({ users })
+    const Users = await users.find()
+    if (Users) {
+      res.status(200).json({ Users })
     }
   } catch (error) {
     next(error)
