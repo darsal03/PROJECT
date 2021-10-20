@@ -1,6 +1,6 @@
 import express from 'express'
 import { getUserById, getUsers, createUser, login, logout } from './controllers/users.js'
-import { createMeal } from './controllers/meals.js'
+import { createMeal, getMeals, deleteMeal, getMealById } from './controllers/meals.js'
 export const router = express.Router()
 
 /**
@@ -14,7 +14,7 @@ router.post('/logout', logout)
 /*
  Meals 
 */
-// router.get('/meals',getMeals)
+router.get('/meals', getMeals)
 router.post('/meals', createMeal)
-//router.get('meal/:id',getMealById)
-//router.delete('meals'deleteMeal)
+router.get('/meals/:id', getMealById)
+router.delete('/meals/:id', deleteMeal)
