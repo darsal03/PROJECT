@@ -71,7 +71,13 @@ export const getMeals = async (req, res, next) => {
 export const deleteMeal = async (req, res, next) => {
   try {
     const id = req.params.id
+    const foundMeal = await meals.findOne({ _id: id })
     const deleteMeal = await meals.deleteOne({ _id: id })
+    if (!foundMeal) {
+      return res.status(404).json({
+        msg: 'could not find that meal',
+      })
+    }
     if (deleteMeal) {
       return res.status(200).json({
         msg: 'meal successfully deleted',
@@ -86,8 +92,12 @@ export const getMealById = async (req, res, next) => {
   try {
     const id = req.params.id
     const foundMeal = await meals.findOne({ _id: id })
-    if (foundMeal) {
-      return res.status(200).json({ meal: foundMeal })
+    if (!foundMeal) {
+      return res.status(404).json({
+        msg: 'could not find that meal',
+      })
+    } else {
+      res.status(200).json({ meal: foundMeal })
     }
   } catch (error) {
     next(error)
