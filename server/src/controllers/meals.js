@@ -3,6 +3,7 @@ import { meals } from '../models/Meals.js'
 export const postMeal = async (req, res, next) => {
   try {
     const { name, calories } = req.body
+    const date = new Date()
     if (name.length < 4 || name.length > 50) {
       return res.status(400).json({
         msg: 'meal name must be between 5 and 50 charachters',
@@ -16,6 +17,15 @@ export const postMeal = async (req, res, next) => {
     const newMeal = await meals.create({
       name,
       calories,
+      date: {
+        day: date.getDate(),
+        month: date.getMonth() + 1,
+        year: date.getFullYear(),
+      },
+      time: {
+        hour: date.getHours(),
+        minute: date.getMinutes(),
+      },
     })
 
     if (newMeal) {
@@ -31,24 +41,27 @@ export const postMeal = async (req, res, next) => {
 export const getMeals = async (req, res, next) => {
   try {
     const { calories } = req.query
-    const Meals = await meals.find()
+    const foundMeals = await meals.find()
 
+    if (foundMeals) {
+      res.status(200).json({ foundMeals })
+    } else {
+      return res.status(404).json({
+        msg: 'meals not found',
+      })
+    }
     if (calories === 'desc') {
-      const mealsDesc = Meals.sort((a, b) => {
+      const mealsDesc = foundMeals.sort((a, b) => {
         return b.calories - a.calories
       })
       return res.status(200).json({ mealsDesc })
     }
 
     if (calories === 'asc') {
-      const mealsAsc = Meals.sort((a, b) => {
+      const mealsAsc = foundMeals.sort((a, b) => {
         return a.calories - b.calories
       })
       return res.status(200).json({ mealsAsc })
-    }
-
-    if (Meals) {
-      return res.status(200).json({ Meals })
     }
   } catch (error) {
     next(error)
@@ -72,9 +85,9 @@ export const deleteMeal = async (req, res, next) => {
 export const getMealById = async (req, res, next) => {
   try {
     const id = req.params.id
-    const meal = await meals.findOne({ _id: id })
-    if (meal) {
-      return res.status(200).json({ meal: meal })
+    const foundMeal = await meals.findOne({ _id: id })
+    if (foundMeal) {
+      return res.status(200).json({ meal: foundMeal })
     }
   } catch (error) {
     next(error)
@@ -85,8 +98,15 @@ export const updateMeal = async (req, res, next) => {
   try {
     const id = req.params.id
     const updates = req.body
-    const updateMeal = await meals.findByIdAndUpdate(id, updates, { new: true })
-    return res.status(200).json({ meal: updateMeal })
+    const foundMeal = await meals.findOne({ _id: id })
+    if (!foundMeal) {
+      return res.status(404).json({
+        msg: 'could not find that meal',
+      })
+    } else {
+      const updateMeal = await meals.findByIdAndUpdate(id, updates, { new: true })
+      return res.status(200).json({ meal: updateMeal })
+    }
   } catch (error) {
     next(error)
   }
