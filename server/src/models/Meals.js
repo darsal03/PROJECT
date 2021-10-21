@@ -11,6 +11,15 @@ const mealSchema = new Schema(
       type: Number,
       required: true,
     },
+    date: {
+      day: Number,
+      month: Number,
+      year: Number,
+    },
+    time: {
+      hour: Number,
+      minute: Number,
+    },
   },
   { timestamps: true }
 )
