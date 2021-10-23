@@ -7,6 +7,10 @@ export const getUsers = async (req, res, next) => {
     const foundUsers = await users.find()
     if (foundUsers) {
       res.status(200).json({ foundUsers })
+    } else {
+      return res.status(404).json({
+        msg: 'could not find the users',
+      })
     }
   } catch (error) {
     next(error)
@@ -19,6 +23,10 @@ export const getUserById = async (req, res, next) => {
     const foundUser = await users.findOne({ _id: id })
     if (foundUser) {
       res.status(200).json({ user: foundUser })
+    } else {
+      return res.status(404).json({
+        msg: 'could not find that user',
+      })
     }
   } catch (error) {
     next(error)
@@ -40,6 +48,11 @@ export const createUser = async (req, res, next) => {
         msg: 'this email is already registered',
       })
     }
+    if (password.length < 9) {
+      return res.status(400).json({
+        msg: 'password should be at least 9 characters',
+      })
+    }
     const hashedPassword = await bcrypt.hash(password, 10)
     const newUser = await users.create({
       username,
@@ -52,7 +65,7 @@ export const createUser = async (req, res, next) => {
       })
     }
   } catch (error) {
-    next(error)
+    next(error.message)
   }
 }
 

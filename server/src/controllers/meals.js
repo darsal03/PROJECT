@@ -4,28 +4,19 @@ export const postMeal = async (req, res, next) => {
   try {
     const { name, calories } = req.body
     const date = new Date()
-    if (name.length < 4 || name.length > 50) {
-      return res.status(400).json({
-        msg: 'meal name must be between 5 and 50 charachters',
-      })
-    }
-    if (calories < 100 || calories > 12000) {
-      return res.status(400).json({
-        msg: 'calories must be between 1000 and 12000',
-      })
-    }
     const newMeal = await meals.create({
       name,
       calories,
-      date: {
+      parsedDate: {
         day: date.getDate(),
         month: date.getMonth() + 1,
         year: date.getFullYear(),
       },
-      time: {
+      parsedTime: {
         hour: date.getHours(),
         minute: date.getMinutes(),
       },
+      date: date.toString(),
     })
 
     if (newMeal) {
@@ -34,7 +25,7 @@ export const postMeal = async (req, res, next) => {
       })
     }
   } catch (error) {
-    next(error)
+    next(error.message)
   }
 }
 
@@ -43,13 +34,6 @@ export const getMeals = async (req, res, next) => {
     const { calories } = req.query
     const foundMeals = await meals.find()
 
-    if (foundMeals) {
-      res.status(200).json({ foundMeals })
-    } else {
-      return res.status(404).json({
-        msg: 'meals not found',
-      })
-    }
     if (calories === 'desc') {
       const mealsDesc = foundMeals.sort((a, b) => {
         return b.calories - a.calories
@@ -63,6 +47,13 @@ export const getMeals = async (req, res, next) => {
       })
       return res.status(200).json({ mealsAsc })
     }
+    if (foundMeals) {
+      res.status(200).json({ foundMeals })
+    } else {
+      return res.status(404).json({
+        msg: 'meals not found',
+      })
+    }
   } catch (error) {
     next(error)
   }
@@ -71,16 +62,14 @@ export const getMeals = async (req, res, next) => {
 export const deleteMeal = async (req, res, next) => {
   try {
     const id = req.params.id
-    const foundMeal = await meals.findOne({ _id: id })
     const deleteMeal = await meals.deleteOne({ _id: id })
-    if (!foundMeal) {
-      return res.status(404).json({
-        msg: 'could not find that meal',
-      })
-    }
     if (deleteMeal) {
       return res.status(200).json({
         msg: 'meal successfully deleted',
+      })
+    } else {
+      return res.status(404).json({
+        msg: 'could not find that meal ',
       })
     }
   } catch (error) {
@@ -108,14 +97,13 @@ export const updateMeal = async (req, res, next) => {
   try {
     const id = req.params.id
     const updates = req.body
-    const foundMeal = await meals.findOne({ _id: id })
-    if (!foundMeal) {
-      return res.status(404).json({
-        msg: 'could not find that meal',
-      })
+    const updateMeal = await meals.findByIdAndUpdate(id, updates, { new: true })
+    if (updateMeal) {
+      res.status(200).json({ meal: updateMeal })
     } else {
-      const updateMeal = await meals.findByIdAndUpdate(id, updates, { new: true })
-      return res.status(200).json({ meal: updateMeal })
+      return res.status(404).json({
+        msg: 'could not delete that meal',
+      })
     }
   } catch (error) {
     next(error)
