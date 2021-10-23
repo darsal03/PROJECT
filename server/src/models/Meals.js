@@ -5,20 +5,28 @@ const mealSchema = new Schema(
   {
     name: {
       type: String,
-      required: true,
+      minlength: [6, 'should be at least 6 characters'],
+      maxlength: [40, 'should not exceed  40 characters'],
+      required: [true, 'meal name is required'],
     },
     calories: {
       type: Number,
-      required: true,
+      min: [300, 'should be at least 300 calories'],
+      max: [5000, 'should not exceed 5000 calories'],
+      required: [true, 'calorie count is required'],
     },
-    date: {
+    parsedDate: {
       day: Number,
       month: Number,
       year: Number,
     },
-    time: {
+    parsedTime: {
       hour: Number,
       minute: Number,
+    },
+    date: {
+      type: String,
+      required: true, //for now
     },
   },
   { timestamps: true }
