@@ -32,4 +32,4 @@ const mealSchema = new Schema(
   { timestamps: true }
 )
 
-export const meals = model('meals', mealSchema)
+export const Meals = model('meals', mealSchema)
