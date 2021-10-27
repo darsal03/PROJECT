@@ -26,7 +26,7 @@ const mealSchema = new Schema(
     },
     date: {
       type: String,
-      required: true, //for now
+      required: true,
     },
   },
   { timestamps: true }
