@@ -1,10 +1,10 @@
-import { users } from '../models/User.js'
+import { Users } from '../models/User.js'
 
 import bcrypt from 'bcrypt'
 
 export const getUsers = async (req, res, next) => {
   try {
-    const foundUsers = await users.find()
+    const foundUsers = await Users.find()
     if (foundUsers) {
       res.status(200).json({ foundUsers })
     } else {
@@ -20,7 +20,7 @@ export const getUsers = async (req, res, next) => {
 export const getUserById = async (req, res, next) => {
   try {
     const id = req.params.id
-    const foundUser = await users.findOne({ _id: id })
+    const foundUser = await Users.findOne({ _id: id })
     if (foundUser) {
       res.status(200).json({ user: foundUser })
     } else {
@@ -36,8 +36,8 @@ export const getUserById = async (req, res, next) => {
 export const createUser = async (req, res, next) => {
   try {
     const { username, email, password } = req.body
-    const foundUser = await users.findOne({ username })
-    const foundEmail = await users.findOne({ email })
+    const foundUser = await Users.findOne({ username })
+    const foundEmail = await Users.findOne({ email })
     if (foundUser) {
       return res.status(400).json({
         msg: 'this username is already registered',
@@ -54,7 +54,7 @@ export const createUser = async (req, res, next) => {
       })
     }
     const hashedPassword = await bcrypt.hash(password, 10)
-    const newUser = await users.create({
+    const newUser = await Users.create({
       username,
       email,
       hashedPassword,
@@ -72,7 +72,7 @@ export const createUser = async (req, res, next) => {
 export const login = async (req, res, next) => {
   try {
     const { username, password } = req.body
-    const foundUser = await users.findOne({ username })
+    const foundUser = await Users.findOne({ username })
     const checkPassword = await bcrypt.compare(password, foundUser.hashedPassword)
     if (foundUser && checkPassword) {
       req.session.userId = foundUser._id
@@ -91,7 +91,7 @@ export const login = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   try {
-    const foundUser = await users.findOne({ _id: req.session.userId })
+    const foundUser = await Users.findOne({ _id: req.session.userId })
     if (foundUser) {
       req.session.destroy((err) => {
         if (err) {
