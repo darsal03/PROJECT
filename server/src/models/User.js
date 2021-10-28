@@ -4,15 +4,18 @@ const { Schema, model } = mongoose
 const userSchema = new Schema({
   username: {
     type: String,
-    required: true,
+    minlength: [6, 'should contain at least 6 characters'],
+    maxlength: [30, 'should not exceed 30 characters'],
+    required: [true, 'username is required'],
   },
   hashedPassword: {
     type: String,
-    required: true,
+    required: [true, 'password is required'],
   },
   email: {
     type: String,
-    required: true,
+    maxlength: [100, 'should not exceed 100 characters'],
+    required: [true, 'email is required'],
   },
   role: {
     type: String,
@@ -21,4 +24,4 @@ const userSchema = new Schema({
   },
 })
 
-export const users = model('users', userSchema)
+export const Users = model('users', userSchema)
