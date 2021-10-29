@@ -1,5 +1,7 @@
 import { Users } from '../models/User.js'
 
+import { validateUser } from '../utils/validateUser.js'
+
 import bcrypt from 'bcrypt'
 
 export const getUsers = async (req, res, next) => {
@@ -36,8 +38,12 @@ export const getUserById = async (req, res, next) => {
 export const createUser = async (req, res, next) => {
   try {
     const { username, email, password } = req.body
+    const messages = await validateUser({ username, email, password })
     const foundUser = await Users.findOne({ username })
     const foundEmail = await Users.findOne({ email })
+    if (messages) {
+      return res.status(400).json({ msg: messages })
+    }
     if (foundUser) {
       return res.status(400).json({
         msg: 'this username is already registered',
@@ -48,11 +54,7 @@ export const createUser = async (req, res, next) => {
         msg: 'this email is already registered',
       })
     }
-    if (password.length < 9) {
-      return res.status(400).json({
-        msg: 'password should be at least 9 characters',
-      })
-    }
+
     const hashedPassword = await bcrypt.hash(password, 10)
     const newUser = await Users.create({
       username,
