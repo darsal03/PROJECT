@@ -1,5 +1,7 @@
 import Validator from 'fastest-validator'
+
 const v = new Validator()
+
 const userSchema = {
   username: {
     type: 'string',
@@ -27,4 +29,13 @@ const userSchema = {
     },
   },
 }
-export const check = v.compile(userSchema)
+
+const check = v.compile(userSchema)
+
+export const validateUser = async ({ username, email, password }) => {
+  const validate = await check({ username, email, password })
+  if (validate) {
+    const messages = validate.map((e) => e.message)
+    return messages
+  }
+}
