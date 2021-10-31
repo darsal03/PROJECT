@@ -19,9 +19,7 @@ export const postMeal = async (req, res, next) => {
       date: ISOdate,
     })
     if (newMeal) {
-      return res.status(200).json({
-        msg: 'meal successfully created',
-      })
+      return res.status(200).json({})
     }
   } catch (error) {
     next(error.message)
@@ -54,9 +52,7 @@ export const getMeals = async (req, res, next) => {
     if (foundMeals) {
       res.status(200).json({ foundMeals })
     } else {
-      return res.status(404).json({
-        msg: 'could not find the meals by your filter parameters',
-      })
+      return res.status(404).json({})
     }
   } catch (error) {
     next(error)
@@ -68,13 +64,9 @@ export const deleteMeal = async (req, res, next) => {
     const id = req.params.id
     const deleteMeal = await Meals.deleteOne({ _id: id })
     if (deleteMeal) {
-      return res.status(200).json({
-        msg: 'meal successfully deleted',
-      })
+      return res.status(200).json({})
     } else {
-      return res.status(404).json({
-        msg: 'could not find that meal ',
-      })
+      return res.status(404).json({})
     }
   } catch (error) {
     next(error)
@@ -86,11 +78,9 @@ export const getMealById = async (req, res, next) => {
     const id = req.params.id
     const foundMeal = await Meals.findOne({ _id: id })
     if (!foundMeal) {
-      return res.status(404).json({
-        msg: 'could not find that meal',
-      })
+      return res.status(404).json({})
     } else {
-      res.status(200).json({ meal: foundMeal })
+      res.status(200).json({ foundMeal })
     }
   } catch (error) {
     next(error)
@@ -103,11 +93,9 @@ export const updateMeal = async (req, res, next) => {
     const updates = req.body
     const updateMeal = await Meals.findByIdAndUpdate(id, updates, { new: true })
     if (updateMeal) {
-      res.status(200).json({ meal: updateMeal })
+      res.status(200).json({ updateMeal })
     } else {
-      return res.status(404).json({
-        msg: 'could not delete that meal',
-      })
+      return res.status(404).json({})
     }
   } catch (error) {
     next(error)
