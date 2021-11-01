@@ -3,8 +3,11 @@ import { Meals } from '../models/Meals.js'
 export const postMeal = async (req, res, next) => {
   try {
     const { name, calories, date: ISOdate } = req.body
+    const userId = req.user._id
+
     const date = new Date(ISOdate)
     const newMeal = await Meals.create({
+      userId,
       name,
       calories,
       parsedDate: {
@@ -29,6 +32,7 @@ export const postMeal = async (req, res, next) => {
 export const getMeals = async (req, res, next) => {
   try {
     const {
+      userId,
       startDay,
       startMonth,
       startHour,
@@ -41,7 +45,14 @@ export const getMeals = async (req, res, next) => {
       endMinutes,
     } = req.query
 
+    if (userId != req.user._id && (req.user.role == 'user') | (req.user.role == 'moderator')) {
+      return res.status(400).json({
+        error: 'permission denied',
+      })
+    }
+
     const foundMeals = await Meals.find({
+      userId,
       'parsedDate.day': { $gte: startDay, $lte: endDay },
       'parsedDate.month': { $gte: startMonth, $lte: endMonth },
       'parsedDate.year': { $gte: startYear, $lte: endYear },

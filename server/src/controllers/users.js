@@ -20,6 +20,13 @@ export const getUsers = async (req, res, next) => {
 export const getUserById = async (req, res, next) => {
   try {
     const id = req.params.id
+
+    if (id != req.user._id && req.user.role == 'user') {
+      return res.status(400).json({
+        error: 'permission denied',
+      })
+    }
+
     const foundUser = await Users.findOne({ _id: id })
     if (foundUser) {
       res.status(200).json({ foundUser })
@@ -42,10 +49,10 @@ export const createUser = async (req, res, next) => {
       return res.status(400).json({ error: validationState })
     }
     if (foundUser) {
-      return res.status(400).json({})
+      return res.status(400).json({ error: 'user already exists' })
     }
     if (foundEmail) {
-      return res.status(400).json({})
+      return res.status(400).json({ erro: 'email is already taken ' })
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)

@@ -17,7 +17,7 @@ export const router = express.Router()
  */
 router.get('/users', auth, forbidFor([ROLES.User]), getUsers)
 router.post('/users', createUser)
-router.get('/users/:id', auth, forbidFor([ROLES.User]), getUserById)
+router.get('/users/:id', auth, getUserById)
 router.post('/login', login)
 router.post('/logout', auth, logout)
 /*
