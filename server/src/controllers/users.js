@@ -1,5 +1,7 @@
 import { Users } from '../models/User.js'
 
+import { validateUser } from '../utils/validateUser.js'
+
 import bcrypt from 'bcrypt'
 
 export const getUsers = async (req, res, next) => {
@@ -8,9 +10,7 @@ export const getUsers = async (req, res, next) => {
     if (foundUsers) {
       res.status(200).json({ foundUsers })
     } else {
-      return res.status(404).json({
-        msg: 'could not find the users',
-      })
+      return res.status(404).json({})
     }
   } catch (error) {
     next(error)
@@ -22,11 +22,9 @@ export const getUserById = async (req, res, next) => {
     const id = req.params.id
     const foundUser = await Users.findOne({ _id: id })
     if (foundUser) {
-      res.status(200).json({ user: foundUser })
+      res.status(200).json({ foundUser })
     } else {
-      return res.status(404).json({
-        msg: 'could not find that user',
-      })
+      return res.status(404).json({})
     }
   } catch (error) {
     next(error)
@@ -36,23 +34,20 @@ export const getUserById = async (req, res, next) => {
 export const createUser = async (req, res, next) => {
   try {
     const { username, email, password } = req.body
+    const validationState = await validateUser({ username, email, password })
     const foundUser = await Users.findOne({ username })
     const foundEmail = await Users.findOne({ email })
+
+    if (validationState) {
+      return res.status(400).json({ error: validationState })
+    }
     if (foundUser) {
-      return res.status(400).json({
-        msg: 'this username is already registered',
-      })
+      return res.status(400).json({})
     }
     if (foundEmail) {
-      return res.status(400).json({
-        msg: 'this email is already registered',
-      })
+      return res.status(400).json({})
     }
-    if (password.length < 9) {
-      return res.status(400).json({
-        msg: 'password should be at least 9 characters',
-      })
-    }
+
     const hashedPassword = await bcrypt.hash(password, 10)
     const newUser = await Users.create({
       username,
@@ -60,9 +55,7 @@ export const createUser = async (req, res, next) => {
       hashedPassword,
     })
     if (newUser) {
-      res.status(201).json({
-        msg: 'registration was successful',
-      })
+      res.status(201).json({})
     }
   } catch (error) {
     next(error.message)
@@ -76,13 +69,9 @@ export const login = async (req, res, next) => {
     const checkPassword = await bcrypt.compare(password, foundUser.hashedPassword)
     if (foundUser && checkPassword) {
       req.session.userId = foundUser._id
-      res.status(200).json({
-        msg: 'logged in',
-      })
+      res.status(200).json({})
     } else {
-      return res.status(400).json({
-        msg: 'login failed',
-      })
+      return res.status(400).json({})
     }
   } catch (error) {
     next(error)
@@ -99,9 +88,7 @@ export const logout = async (req, res, next) => {
         }
       })
     }
-    res.status(200).json({
-      msg: 'logged out',
-    })
+    res.status(200).json({})
   } catch (error) {
     next(error)
   }

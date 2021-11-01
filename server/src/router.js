@@ -1,21 +1,30 @@
 import express from 'express'
+
+import { ROLES } from './constants.js'
+
+import { auth } from './middlewares/auth.js'
+
+import { forbidFor } from './middlewares/forbidFor.js'
+
 import { getUserById, getUsers, createUser, login, logout } from './controllers/users.js'
+
 import { postMeal, getMeals, deleteMeal, getMealById, updateMeal } from './controllers/meals.js'
+
 export const router = express.Router()
 
 /**
  * Users
  */
-router.get('/users', getUsers)
+router.get('/users', auth, forbidFor([ROLES.User]), getUsers)
 router.post('/users', createUser)
-router.get('/users/:id', getUserById)
+router.get('/users/:id', auth, forbidFor([ROLES.User]), getUserById)
 router.post('/login', login)
-router.post('/logout', logout)
+router.post('/logout', auth, logout)
 /*
  Meals 
 */
-router.get('/meals', getMeals)
-router.get('/meals/:id', getMealById)
-router.post('/meals', postMeal)
-router.delete('/meals/:id', deleteMeal)
-router.patch('/meals/:id', updateMeal)
+router.get('/meals', auth, getMeals)
+router.get('/meals/:id', auth, getMealById)
+router.post('/meals', auth, postMeal)
+router.delete('/meals/:id', auth, deleteMeal)
+router.patch('/meals/:id', auth, updateMeal)
