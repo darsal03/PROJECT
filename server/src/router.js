@@ -6,7 +6,14 @@ import { auth } from './middlewares/auth.js'
 
 import { forbidFor } from './middlewares/forbidFor.js'
 
-import { getUserById, getUsers, createUser, login, logout } from './controllers/users.js'
+import {
+  getUserById,
+  getUsers,
+  createUser,
+  login,
+  logout,
+  updateUser,
+} from './controllers/users.js'
 
 import { postMeal, getMeals, deleteMeal, getMealById, updateMeal } from './controllers/meals.js'
 
@@ -20,6 +27,7 @@ router.post('/users', createUser)
 router.get('/users/:id', auth, getUserById)
 router.post('/login', login)
 router.post('/logout', auth, logout)
+router.patch('/users/:id', auth, updateUser)
 /*
  Meals 
 */
