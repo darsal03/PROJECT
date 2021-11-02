@@ -21,10 +21,8 @@ export const getUserById = async (req, res, next) => {
   try {
     const id = req.params.id
 
-    if (id != req.user._id && req.user.role == 'user') {
-      return res.status(400).json({
-        error: 'permission denied',
-      })
+    if (id !== req.user._id.toString() && req.user.role === 'user') {
+      return res.status(403).json({})
     }
 
     const foundUser = await Users.findOne({ _id: id })
@@ -52,7 +50,7 @@ export const createUser = async (req, res, next) => {
       return res.status(400).json({ error: 'user already exists' })
     }
     if (foundEmail) {
-      return res.status(400).json({ erro: 'email is already taken ' })
+      return res.status(400).json({ error: 'email is already taken ' })
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -63,6 +61,22 @@ export const createUser = async (req, res, next) => {
     })
     if (newUser) {
       res.status(201).json({})
+    }
+  } catch (error) {
+    next(error.message)
+  }
+}
+
+export const updateUser = async (req, res, next) => {
+  try {
+    const id = req.params.id
+    const updates = req.body
+
+    if (id !== req.user._id.toString() && req.user.role === 'user') {
+      return res.status(403).json({})
+    } else {
+      await Users.findByIdAndUpdate(id, updates, { new: true })
+      res.status(200).json({})
     }
   } catch (error) {
     next(error.message)
