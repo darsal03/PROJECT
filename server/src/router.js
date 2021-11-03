@@ -13,6 +13,7 @@ import {
   login,
   logout,
   updateUser,
+  deleteUser,
 } from './controllers/users.js'
 
 import { postMeal, getMeals, deleteMeal, getMealById, updateMeal } from './controllers/meals.js'
@@ -28,6 +29,7 @@ router.get('/users/:id', auth, getUserById)
 router.post('/login', login)
 router.post('/logout', auth, logout)
 router.patch('/users/:id', auth, updateUser)
+router.delete('/users/:id', auth, deleteUser)
 /*
  Meals 
 */
