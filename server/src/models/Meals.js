@@ -3,6 +3,10 @@ const { Schema, model } = mongoose
 
 const mealSchema = new Schema(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+    },
     name: {
       type: String,
       minlength: [6, 'should be at least 6 characters'],

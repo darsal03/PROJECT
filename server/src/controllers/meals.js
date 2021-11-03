@@ -1,10 +1,15 @@
 import { Meals } from '../models/Meals.js'
 
+import { ROLES } from '../constants.js'
+
 export const postMeal = async (req, res, next) => {
   try {
     const { name, calories, date: ISOdate } = req.body
+    const userId = req.user._id
     const date = new Date(ISOdate)
+
     const newMeal = await Meals.create({
+      userId,
       name,
       calories,
       parsedDate: {
@@ -29,6 +34,7 @@ export const postMeal = async (req, res, next) => {
 export const getMeals = async (req, res, next) => {
   try {
     const {
+      userId,
       startDay,
       startMonth,
       startHour,
@@ -41,7 +47,15 @@ export const getMeals = async (req, res, next) => {
       endMinutes,
     } = req.query
 
+    if (
+      userId !== req.user._id.toString() &&
+      [ROLES.User, ROLES.Moderator].includes(req.user.role)
+    ) {
+      return res.status(403).json({})
+    }
+
     const foundMeals = await Meals.find({
+      userId,
       'parsedDate.day': { $gte: startDay, $lte: endDay },
       'parsedDate.month': { $gte: startMonth, $lte: endMonth },
       'parsedDate.year': { $gte: startYear, $lte: endYear },
@@ -62,14 +76,19 @@ export const getMeals = async (req, res, next) => {
 export const deleteMeal = async (req, res, next) => {
   try {
     const id = req.params.id
-    const deleteMeal = await Meals.deleteOne({ _id: id })
-    if (deleteMeal) {
-      return res.status(200).json({})
+    const foundMeal = await Meals.findOne({ _id: id })
+
+    if (
+      foundMeal.userId.toString() !== req.user._id.toString() &&
+      [ROLES.User, ROLES.Moderator].includes(req.user.role)
+    ) {
+      return res.status(403).json({})
     } else {
-      return res.status(404).json({})
+      await Meals.deleteOne({ _id: id })
+      res.status(200).json({})
     }
   } catch (error) {
-    next(error)
+    next(error.message)
   }
 }
 
@@ -77,13 +96,17 @@ export const getMealById = async (req, res, next) => {
   try {
     const id = req.params.id
     const foundMeal = await Meals.findOne({ _id: id })
-    if (!foundMeal) {
-      return res.status(404).json({})
+
+    if (
+      foundMeal.userId.toString() !== req.user._id.toString() &&
+      [ROLES.User, ROLES.Moderator].includes(req.user.role)
+    ) {
+      return res.status(403).json({})
     } else {
       res.status(200).json({ foundMeal })
     }
   } catch (error) {
-    next(error)
+    next(error.message)
   }
 }
 
@@ -91,13 +114,18 @@ export const updateMeal = async (req, res, next) => {
   try {
     const id = req.params.id
     const updates = req.body
-    const updateMeal = await Meals.findByIdAndUpdate(id, updates, { new: true })
-    if (updateMeal) {
-      res.status(200).json({ updateMeal })
+    const foundMeal = await Meals.findOne({ _id: id })
+
+    if (
+      foundMeal.userId.toString() !== req.user._id.toString() &&
+      [ROLES.User, ROLES.Moderator].includes(req.user.role)
+    ) {
+      return res.status(403).json({})
     } else {
-      return res.status(404).json({})
+      await Meals.findByIdAndUpdate(id, updates, { new: true })
+      res.status(200).json({})
     }
   } catch (error) {
-    next(error)
+    next(error.message)
   }
 }

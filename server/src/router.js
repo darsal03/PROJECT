@@ -6,7 +6,15 @@ import { auth } from './middlewares/auth.js'
 
 import { forbidFor } from './middlewares/forbidFor.js'
 
-import { getUserById, getUsers, createUser, login, logout } from './controllers/users.js'
+import {
+  getUserById,
+  getUsers,
+  createUser,
+  login,
+  logout,
+  updateUser,
+  deleteUser,
+} from './controllers/users.js'
 
 import { postMeal, getMeals, deleteMeal, getMealById, updateMeal } from './controllers/meals.js'
 
@@ -17,9 +25,11 @@ export const router = express.Router()
  */
 router.get('/users', auth, forbidFor([ROLES.User]), getUsers)
 router.post('/users', createUser)
-router.get('/users/:id', auth, forbidFor([ROLES.User]), getUserById)
+router.get('/users/:id', auth, getUserById)
 router.post('/login', login)
 router.post('/logout', auth, logout)
+router.patch('/users/:id', auth, updateUser)
+router.delete('/users/:id', auth, deleteUser)
 /*
  Meals 
 */
