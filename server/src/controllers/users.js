@@ -4,9 +4,12 @@ import { validateUser } from '../utils/validateUser.js'
 
 import bcrypt from 'bcrypt'
 
+import { ROLES } from '../constants.js'
+
 export const getUsers = async (req, res, next) => {
   try {
     const foundUsers = await Users.find()
+
     if (foundUsers) {
       res.status(200).json({ foundUsers })
     } else {
@@ -21,7 +24,7 @@ export const getUserById = async (req, res, next) => {
   try {
     const id = req.params.id
 
-    if (id !== req.user._id.toString() && req.user.role === 'user') {
+    if (id !== req.user._id.toString() && [ROLES.User].includes(req.user.role)) {
       return res.status(403).json({})
     }
 
@@ -50,7 +53,7 @@ export const createUser = async (req, res, next) => {
       return res.status(400).json({ error: 'user already exists' })
     }
     if (foundEmail) {
-      return res.status(400).json({ error: 'email is already taken ' })
+      return res.status(400).json({ error: 'email is already taken' })
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -72,10 +75,25 @@ export const updateUser = async (req, res, next) => {
     const id = req.params.id
     const updates = req.body
 
-    if (id !== req.user._id.toString() && req.user.role === 'user') {
+    if (id !== req.user._id.toString() && [ROLES.User].includes(req.user.role)) {
       return res.status(403).json({})
     } else {
       await Users.findByIdAndUpdate(id, updates, { new: true })
+      res.status(200).json({})
+    }
+  } catch (error) {
+    next(error.message)
+  }
+}
+
+export const deleteUser = async (req, res, next) => {
+  try {
+    const id = req.params.id
+
+    if (id !== req.user._id.toString() && [ROLES.User].includes(req.user.role)) {
+      return res.status(403).json({})
+    } else {
+      await Users.findByIdAndDelete(id)
       res.status(200).json({})
     }
   } catch (error) {
@@ -88,11 +106,12 @@ export const login = async (req, res, next) => {
     const { username, password } = req.body
     const foundUser = await Users.findOne({ username })
     const checkPassword = await bcrypt.compare(password, foundUser.hashedPassword)
+
     if (foundUser && checkPassword) {
       req.session.userId = foundUser._id
       res.status(200).json({})
     } else {
-      return res.status(400).json({})
+      return res.status(400).json({ error: 'incorrect username or password' })
     }
   } catch (error) {
     next(error)

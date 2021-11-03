@@ -1,5 +1,7 @@
 import { Meals } from '../models/Meals.js'
 
+import { ROLES } from '../constants.js'
+
 export const postMeal = async (req, res, next) => {
   try {
     const { name, calories, date: ISOdate } = req.body
@@ -47,7 +49,7 @@ export const getMeals = async (req, res, next) => {
 
     if (
       userId !== req.user._id.toString() &&
-      (req.user.role === 'user') | (req.user.role === 'moderator')
+      [ROLES.User, ROLES.Moderator].includes(req.user.role)
     ) {
       return res.status(403).json({})
     }
@@ -76,7 +78,10 @@ export const deleteMeal = async (req, res, next) => {
     const id = req.params.id
     const foundMeal = await Meals.findOne({ _id: id })
 
-    if (foundMeal.userId.toString() !== req.user._id.toString() && req.user.role === 'user') {
+    if (
+      foundMeal.userId.toString() !== req.user._id.toString() &&
+      [ROLES.User, ROLES.Moderator].includes(req.user.role)
+    ) {
       return res.status(403).json({})
     } else {
       await Meals.deleteOne({ _id: id })
@@ -92,7 +97,10 @@ export const getMealById = async (req, res, next) => {
     const id = req.params.id
     const foundMeal = await Meals.findOne({ _id: id })
 
-    if (foundMeal.userId.toString() !== req.user._id.toString() && req.user.role === 'user') {
+    if (
+      foundMeal.userId.toString() !== req.user._id.toString() &&
+      [ROLES.User, ROLES.Moderator].includes(req.user.role)
+    ) {
       return res.status(403).json({})
     } else {
       res.status(200).json({ foundMeal })
@@ -108,7 +116,10 @@ export const updateMeal = async (req, res, next) => {
     const updates = req.body
     const foundMeal = await Meals.findOne({ _id: id })
 
-    if (foundMeal.userId.toString() !== req.user._id.toString() && req.user.role === 'user') {
+    if (
+      foundMeal.userId.toString() !== req.user._id.toString() &&
+      [ROLES.User, ROLES.Moderator].includes(req.user.role)
+    ) {
       return res.status(403).json({})
     } else {
       await Meals.findByIdAndUpdate(id, updates, { new: true })
