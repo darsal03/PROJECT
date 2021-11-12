@@ -1,6 +1,4 @@
-import { useUsers } from './hooks/use-users'
-
-import { Login, Register } from './containers/Login'
+import { AuthContainer } from './containers/Login'
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
@@ -9,8 +7,8 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route exact path="/" element={<Register />} />
-          <Route path="/login" element={<Login />} />
+          <Route exact path="/" />
+          <Route path="/login" element={<AuthContainer />} />
         </Routes>
       </div>
     </Router>
