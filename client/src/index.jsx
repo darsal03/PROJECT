@@ -1,6 +1,13 @@
 import React from 'react'
+
 import ReactDOM from 'react-dom'
+
 import { QueryClient, QueryClientProvider } from 'react-query'
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+
+import { AuthContainer } from './containers/Login'
+
 import App from './App'
 
 const queryClient = new QueryClient({
@@ -15,7 +22,13 @@ const queryClient = new QueryClient({
 ReactDOM.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App />
+      <Router>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route path="login" element={<AuthContainer />} />
+          </Route>
+        </Routes>
+      </Router>
     </QueryClientProvider>
   </React.StrictMode>,
   document.getElementById('root')

@@ -1,17 +1,13 @@
-import { AuthContainer } from './containers/Login'
+import { Outlet } from 'react-router-dom'
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Header from './components/Header'
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route exact path="/" />
-          <Route path="/login" element={<AuthContainer />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="wrapper">
+      <Header />
+      <Outlet />
+    </div>
   )
 }
 
