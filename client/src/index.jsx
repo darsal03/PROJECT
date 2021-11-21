@@ -25,7 +25,7 @@ ReactDOM.render(
       <Router>
         <Routes>
           <Route path="/" element={<App />}>
-            <Route path="login" element={<AuthContainer />} />
+            <Route path="auth" element={<AuthContainer />} />
           </Route>
         </Routes>
       </Router>
