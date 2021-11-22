@@ -4,10 +4,6 @@ import React, { useState } from 'react'
 
 import { useMutation } from 'react-query'
 
-import dotenv from 'dotenv'
-
-dotenv.config()
-
 const Views = {
   Login: 'login',
   Register: 'register',
@@ -89,19 +85,6 @@ const FormButton = styled('button', {
   },
 })
 
-const opacity = keyframes({
-  '0%': { opacity: 0 },
-  '100%': { opacity: 1 },
-})
-
-const SuccessMessage = styled('p', {
-  textAlign: 'center',
-  marginTop: '1rem',
-  fontSize: '5rem',
-  color: 'green',
-  animation: `${opacity} 0.3s forwards`,
-})
-
 function Login({ setView }) {
   return (
     <div>
@@ -114,6 +97,7 @@ function Login({ setView }) {
 }
 
 function Register({ setView, setForm, form }) {
+  console.log(process.env.REACT_APP_API_BASE_URL)
   const { isSuccess, mutate } = useMutation((form) => {
     fetch(process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/users/', {
       method: 'POST',
