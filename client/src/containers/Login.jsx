@@ -1,8 +1,8 @@
-import { styled, css, keyframes } from '../stitches.config'
+import useRegistration from '../hooks/useRegistration'
+
+import { styled } from '../stitches.config'
 
 import React, { useState } from 'react'
-
-import { useMutation } from 'react-query'
 
 const Views = {
   Login: 'login',
@@ -10,103 +10,93 @@ const Views = {
 }
 
 const Box = styled('div', {
-  margin: 'auto',
-  marginTop: '80px',
+  margin: '8rem auto',
   maxWi: '600px',
-  borderRadius: '5px',
+  borderRadius: '0.5rem',
   boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px;',
-  '@xs': {
-    width: '90%',
-  },
 })
 
 const H1 = styled('h1', {
+  padding: '3rem 0 0 0',
   textAlign: 'center',
-  fontSize: '4rem',
+  fontSize: '$heading',
   fontWeight: 'normal',
-  paddingTop: '30px',
 })
 
 const Text = styled('p', {
+  margin: '1rem 0 0 0',
   textAlign: 'center',
-  fontSize: '1.8rem',
-  marginTop: '1rem',
-})
-
-const LoginLinkButton = styled('button', {
-  all: 'unset',
-  color: 'green',
-  fontSize: '1.8rem',
-  cursor: 'pointer',
+  fontSize: '$body',
 })
 
 const Label = styled('label', {
-  marginTop: '1rem',
+  margin: '1rem 0 0 0',
   fontSize: '$title',
-  '@xs': {
-    fontSize: '$body',
-  },
+})
+
+const LinkBackButton = styled('button', {
+  fontSize: '$body',
+  color: 'green',
 })
 
 const Form = styled('form', {
   display: 'flex',
-  padding: '50px 120px',
   flexDirection: 'column',
-  '@xs': {
-    padding: '50px 80px',
-  },
+  padding: '5rem 12rem',
 })
 
 const Input = styled('input', {
-  marginTop: '10px',
+  margin: '1rem 0 0 0',
   padding: '1rem',
-  height: '50px',
+  height: '5rem',
   fontSize: '$body',
-  border: '1px solid gray',
+  border: '0.1rem solid gray',
   borderRadius: '1rem',
 })
 
 const FormButton = styled('button', {
-  margin: 'auto',
-  marginTop: '4rem',
-  padding: '10px 70px',
+  margin: '3rem auto 0',
+  padding: '1rem 7rem',
   fontSize: '$title',
   borderRadius: '1rem',
-  border: '1px solid green',
-  color: 'green',
+  border: '0.1rem solid green',
   transition: 'ease-in-out 0.3s',
+  color: 'green',
   '&:hover': {
-    bg: 'green',
     boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+    bg: 'green',
     color: '#fff',
   },
-  '@xs': {
-    padding: '8px 35px',
+  '@mobile': {
+    padding: '1rem 5rem',
   },
 })
 
-function Login({ setView }) {
+function Login({ onViewChange }) {
   return (
     <div>
       <h1>Login</h1>
-      <button type="button" onClick={setView}>
+      <button type="button" onClick={onViewChange}>
         Register
       </button>
     </div>
   )
 }
 
-function Register({ setView, setForm, form }) {
-  console.log(process.env.REACT_APP_API_BASE_URL)
-  const { isSuccess, mutate } = useMutation((form) => {
-    fetch(process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/users/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(form),
-    })
+function Register({ onViewChange }) {
+  const [form, setForm] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   })
+
+  const [mutate] = useRegistration()
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -127,18 +117,13 @@ function Register({ setView, setForm, form }) {
       return alert('passwords do not match')
     }
 
-    mutate(form)
-
-    setForm({
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
+    mutate(form, {
+      onSuccess: () => {
+        onViewChange()
+      },
     })
-  }
 
-  if (isSuccess) {
-    setView()
+    e.target.reset()
   }
 
   return (
@@ -146,38 +131,42 @@ function Register({ setView, setForm, form }) {
       <H1>Create an account</H1>
       <Text>
         already have an account?{' '}
-        <LoginLinkButton type="button" onClick={setView}>
+        <LinkBackButton type="button" onClick={onViewChange}>
           Log in
-        </LoginLinkButton>
+        </LinkBackButton>
       </Text>
       <Form onSubmit={handleSubmit}>
         <Label htmlFor="username">Username</Label>
         <Input
           type="text"
+          value={form.username}
           name="username"
           placeholder="Username"
-          onChange={(e) => setForm({ ...form, username: e.target.value })}
+          onChange={handleInputChange}
         />
         <Label htmlFor="email">Email</Label>
         <Input
           type="email"
+          value={form.email}
           name="email"
           placeholder="Email"
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          onChange={handleInputChange}
         />
         <Label htmlFor="password">Password</Label>
         <Input
           type="password"
+          value={form.password}
           name="password"
           placeholder="Password"
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          onChange={handleInputChange}
         />
         <Label htmlFor="confirmPassword">Confirm Password</Label>
         <Input
           type="password"
+          value={form.confirmPassword}
           name="confirmPassword"
           placeholder="confirm password"
-          onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+          onChange={handleInputChange}
         />
         <FormButton>Register</FormButton>
       </Form>
@@ -187,19 +176,11 @@ function Register({ setView, setForm, form }) {
 
 export function AuthContainer() {
   const [view, setView] = useState(Views.Register)
-  const [form, setForm] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  })
 
   return (
     <div className="wrapper">
-      {view === Views.Login && <Login setView={() => setView(Views.Register)} />}
-      {view === Views.Register && (
-        <Register setForm={setForm} form={form} setView={() => setView(Views.Login)} />
-      )}
+      {view === Views.Login && <Login onViewChange={() => setView(Views.Register)} />}
+      {view === Views.Register && <Register onViewChange={() => setView(Views.Login)} />}
     </div>
   )
 }

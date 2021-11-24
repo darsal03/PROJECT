@@ -4,7 +4,6 @@ export const { styled, css, globalCss, keyframes, getCssText, theme, createTheme
   createStitches({
     media: {
       pressable: '(hover: none) and (pointer: coarse)',
-      xs: '(max-width:600px)',
       mobile: '(max-width: 1024px)',
       desktop: '(min-width: 1024px)',
     },
