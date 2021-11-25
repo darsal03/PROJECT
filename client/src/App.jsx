@@ -7,10 +7,10 @@ function App() {
   injectGlobalStyles()
 
   return (
-    <div className="wrapper">
+    <>
       <Header />
       <Outlet />
-    </div>
+    </>
   )
 }
 

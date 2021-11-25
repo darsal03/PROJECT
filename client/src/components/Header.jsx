@@ -1,6 +1,9 @@
 import React from 'react'
+
 import { Link } from 'react-router-dom'
+
 import { styled } from '../stitches.config'
+
 import Logo from './Logo'
 
 function NonAuthNav() {
