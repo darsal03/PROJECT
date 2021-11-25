@@ -1,7 +1,5 @@
 import useRegistration from '../hooks/useRegistration'
-
 import { styled } from '../stitches.config'
-
 import React, { useState } from 'react'
 
 const Views = {
@@ -11,7 +9,7 @@ const Views = {
 
 const Box = styled('div', {
   margin: '8rem auto',
-  maxWi: '600px',
+  maxWi: '60rem',
   borderRadius: '0.5rem',
   boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px;',
 })
