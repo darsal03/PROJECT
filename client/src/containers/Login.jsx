@@ -1,4 +1,5 @@
 import useRegistration from '../hooks/useRegistration'
+import useLogin from '../hooks/useLogin'
 import { styled } from '../stitches.config'
 import React, { useState } from 'react'
 
@@ -71,13 +72,67 @@ const FormButton = styled('button', {
 })
 
 function Login({ onViewChange }) {
+  const [form, setForm] = useState({
+    username: '',
+    password: '',
+  })
+
+  const [mutate] = useLogin()
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    if (!form.username || !form.password) {
+      return alert('form must not be empty')
+    }
+
+    if (form.username.length < 6) {
+      return alert('username must contain more than 6 characters')
+    }
+
+    if (form.password.length < 9) {
+      return alert('password should be atleast 9 characters')
+    }
+
+    mutate(form)
+
+    e.target.reset()
+  }
+
   return (
-    <div>
-      <h1>Login</h1>
-      <button type="button" onClick={onViewChange}>
-        Register
-      </button>
-    </div>
+    <Box>
+      <H1>Login</H1>
+      <Text>
+        don't have an account?{' '}
+        <LinkBackButton type="button" onClick={onViewChange}>
+          register
+        </LinkBackButton>
+      </Text>
+      <Form onSubmit={handleSubmit}>
+        <Label htmlFor="username">Username</Label>
+        <Input
+          type="text"
+          value={form.username}
+          name="username"
+          placeholder="Username"
+          onChange={handleInputChange}
+        />
+        <Label htmlFor="password">Password</Label>
+        <Input
+          type="password"
+          value={form.password}
+          name="password"
+          placeholder="Password"
+          onChange={handleInputChange}
+        />
+        <FormButton>Login</FormButton>
+      </Form>
+    </Box>
   )
 }
 
@@ -173,7 +228,7 @@ function Register({ onViewChange }) {
 }
 
 export function AuthContainer() {
-  const [view, setView] = useState(Views.Register)
+  const [view, setView] = useState(Views.Login)
 
   return (
     <div className="wrapper">
