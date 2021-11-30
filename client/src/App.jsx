@@ -2,14 +2,17 @@ import { Outlet } from 'react-router-dom'
 
 import Header from './components/Header'
 import { injectGlobalStyles } from './stitches.config'
+import { AuthProvider } from './Context'
 
 function App() {
   injectGlobalStyles()
 
   return (
     <>
-      <Header />
-      <Outlet />
+      <AuthProvider>
+        <Header />
+        <Outlet />
+      </AuthProvider>
     </>
   )
 }
