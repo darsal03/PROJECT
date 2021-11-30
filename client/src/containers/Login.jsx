@@ -1,7 +1,9 @@
 import useRegistration from '../hooks/useRegistration'
-import useLogin from '../hooks/useLogin'
 import { styled } from '../stitches.config'
-import React, { useState } from 'react'
+import { AuthContext } from '../Context'
+
+import React, { useState, useContext } from 'react'
+import { useNavigate } from 'react-router'
 
 const Views = {
   Login: 'login',
@@ -12,7 +14,7 @@ const Box = styled('div', {
   margin: '8rem auto',
   maxWi: '60rem',
   borderRadius: '0.5rem',
-  boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px;',
+  boxShadow: 'rgba(0, 0, 0, 0.35) 0 0.5rem 1.5rem',
 })
 
 const H1 = styled('h1', {
@@ -62,7 +64,7 @@ const FormButton = styled('button', {
   transition: 'ease-in-out 0.3s',
   color: 'green',
   '&:hover': {
-    boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+    boxShadow: 'rgba(0, 0, 0, 0.35) 0 0.5rem 1.5rem',
     bg: 'green',
     color: '#fff',
   },
@@ -77,7 +79,9 @@ function Login({ onViewChange }) {
     password: '',
   })
 
-  const [mutate] = useLogin()
+  const { mutate, data, ...rest } = useContext(AuthContext)
+  console.log({ rest })
+  const navigate = useNavigate()
 
   const handleInputChange = (event) => {
     const { name, value } = event.target
@@ -99,7 +103,12 @@ function Login({ onViewChange }) {
       return alert('password should be atleast 9 characters')
     }
 
-    mutate(form)
+    mutate(form, {
+      onSuccess: () => {
+        console.log(data)
+        // navigate('/home') //{replace:true}
+      },
+    })
 
     e.target.reset()
   }

@@ -1,10 +1,8 @@
-import { loginUser } from '../api/users'
 import { useMutation } from 'react-query'
+import { loginUser } from '../api/users'
 
 function useLogin() {
-  const { mutate } = useMutation(loginUser)
-
-  return [mutate]
+  return useMutation(loginUser)
 }
 
 export default useLogin

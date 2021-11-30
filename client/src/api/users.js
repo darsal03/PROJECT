@@ -13,7 +13,7 @@ export const createUser = ({ username, email, password }) => {
 }
 
 export const loginUser = ({ username, password }) => {
-  fetch(`${apiUrl}/login/`, {
+  fetch(`${apiUrl}/login`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -21,4 +21,6 @@ export const loginUser = ({ username, password }) => {
     },
     body: JSON.stringify({ username, password }),
   })
+    .then((res) => res.json())
+    .then((data) => data.foundUser)
 }
