@@ -1,8 +1,6 @@
 import { useMutation } from 'react-query'
 import { loginUser } from '../api/users'
 
-function useLogin() {
-  return useMutation(loginUser)
+export function useLogin(config) {
+  return useMutation(loginUser, config)
 }
-
-export default useLogin

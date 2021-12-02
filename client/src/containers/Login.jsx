@@ -1,4 +1,4 @@
-import useRegistration from '../hooks/useRegistration'
+import { useRegistration } from '../hooks/use-registration'
 import { styled } from '../stitches.config'
 import { AuthContext } from '../Context'
 
@@ -153,7 +153,7 @@ function Register({ onViewChange }) {
     confirmPassword: '',
   })
 
-  const [mutate] = useRegistration()
+  const { mutate } = useRegistration()
 
   const handleInputChange = (event) => {
     const { name, value } = event.target
