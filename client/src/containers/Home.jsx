@@ -1,10 +1,18 @@
-import { AuthContext } from '../Context'
-import React, { useContext } from 'react'
+import { useAuth } from '../contexts/auth'
+import React from 'react'
+
+function Dashboard({ username }) {
+  return (
+    <>
+      <h1>{`Hello ${username}`}</h1>
+    </>
+  )
+}
 
 function Home() {
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
 
-  return <div>{user ? console.log(user.username) : 'unauth'}</div>
+  return <div>{user ? <Dashboard username={user.username} /> : 'not authed'}</div>
 }
 
 export default Home
