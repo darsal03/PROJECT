@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import Header from './components/Header'
 import { injectGlobalStyles } from './stitches.config'
 import { AuthProvider } from './contexts/auth'
+import { Content } from './containers/Content'
 
 function App() {
   injectGlobalStyles()
@@ -11,7 +12,7 @@ function App() {
     <>
       <AuthProvider>
         <Header />
-        <Outlet />
+        <Content />
       </AuthProvider>
     </>
   )

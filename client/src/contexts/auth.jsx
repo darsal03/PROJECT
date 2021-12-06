@@ -1,5 +1,4 @@
 import { createContext, useContext, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router'
 
 import { useLogin } from '../hooks/use-login'
 import { useLogout } from '../hooks/use-logout'
@@ -8,14 +7,11 @@ export const AuthContext = createContext()
 export const useAuth = () => useContext(AuthContext)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState({})
-
-  const navigate = useNavigate()
+  const [user, setUser] = useState(null)
 
   const { mutate: login } = useLogin({
     onSuccess: (data) => {
       setUser(data)
-      navigate('/home', { replace: true })
     },
     onError: (error) => alert(JSON.stringify(error, null, 2)),
   })
@@ -23,7 +19,6 @@ export function AuthProvider({ children }) {
   const { mutate: logout } = useLogout({
     onSuccess: () => {
       setUser(null)
-      navigate('/auth', { replace: true })
     },
     onError: (error) => alert(JSON.stringify(error, null, 2)),
   })

@@ -6,9 +6,6 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
-import { AuthContainer } from './containers/Login'
-import HomePage from './containers/Home'
-
 import App from './App'
 
 const queryClient = new QueryClient({
@@ -25,10 +22,7 @@ ReactDOM.render(
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
-          <Route path="/" element={<App />}>
-            <Route path="auth" element={<AuthContainer />} />
-            <Route path="home" element={<HomePage />} />
-          </Route>
+          <Route path="/" element={<App />}></Route>
         </Routes>
       </Router>
     </QueryClientProvider>
