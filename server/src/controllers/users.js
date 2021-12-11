@@ -109,7 +109,7 @@ export const login = async (req, res, next) => {
 
     if (foundUser && checkPassword) {
       req.session.userId = foundUser._id
-      res.status(200).json({})
+      res.status(200).json({ foundUser })
     } else {
       return res.status(400).json({ error: 'incorrect username or password' })
     }

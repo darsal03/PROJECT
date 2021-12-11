@@ -1,5 +1,7 @@
-import useRegistration from '../hooks/useRegistration'
+import { useRegistration } from '../hooks/use-registration'
 import { styled } from '../stitches.config'
+import { useAuth } from '../contexts/auth'
+
 import React, { useState } from 'react'
 
 const Views = {
@@ -11,7 +13,7 @@ const Box = styled('div', {
   margin: '8rem auto',
   maxWi: '60rem',
   borderRadius: '0.5rem',
-  boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px;',
+  boxShadow: 'rgba(0, 0, 0, 0.35) 0 0.5rem 1.5rem',
 })
 
 const H1 = styled('h1', {
@@ -61,7 +63,7 @@ const FormButton = styled('button', {
   transition: 'ease-in-out 0.3s',
   color: 'green',
   '&:hover': {
-    boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+    boxShadow: 'rgba(0, 0, 0, 0.35) 0 0.5rem 1.5rem',
     bg: 'green',
     color: '#fff',
   },
@@ -71,13 +73,67 @@ const FormButton = styled('button', {
 })
 
 function Login({ onViewChange }) {
+  const [form, setForm] = useState({
+    username: '',
+    password: '',
+  })
+
+  const { login } = useAuth()
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    if (!form.username || !form.password) {
+      return alert('form must not be empty')
+    }
+
+    if (form.username.length < 6) {
+      return alert('username must contain more than 6 characters')
+    }
+
+    if (form.password.length < 9) {
+      return alert('password should be atleast 9 characters')
+    }
+
+    login(form)
+
+    e.target.reset()
+  }
+
   return (
-    <div>
-      <h1>Login</h1>
-      <button type="button" onClick={onViewChange}>
-        Register
-      </button>
-    </div>
+    <Box>
+      <H1>Login</H1>
+      <Text>
+        don't have an account?{' '}
+        <LinkBackButton type="button" onClick={onViewChange}>
+          register
+        </LinkBackButton>
+      </Text>
+      <Form onSubmit={handleSubmit}>
+        <Label htmlFor="username">Username</Label>
+        <Input
+          type="text"
+          value={form.username}
+          name="username"
+          placeholder="Username"
+          onChange={handleInputChange}
+        />
+        <Label htmlFor="password">Password</Label>
+        <Input
+          type="password"
+          value={form.password}
+          name="password"
+          placeholder="Password"
+          onChange={handleInputChange}
+        />
+        <FormButton>Login</FormButton>
+      </Form>
+    </Box>
   )
 }
 
@@ -89,7 +145,7 @@ function Register({ onViewChange }) {
     confirmPassword: '',
   })
 
-  const [mutate] = useRegistration()
+  const { mutate } = useRegistration()
 
   const handleInputChange = (event) => {
     const { name, value } = event.target
@@ -173,7 +229,7 @@ function Register({ onViewChange }) {
 }
 
 export function AuthContainer() {
-  const [view, setView] = useState(Views.Register)
+  const [view, setView] = useState(Views.Login)
 
   return (
     <div className="wrapper">

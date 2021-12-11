@@ -19,10 +19,7 @@ dotenv.config()
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
 app.use(configCors)
-
-// eslint-disable-next-line no-unused-vars
 
 const sessionStore = new MongoStore({
   mongoUrl: process.env.DB_URL,
@@ -31,7 +28,7 @@ const sessionStore = new MongoStore({
 
 app.use(
   session({
-    secret: 'foo' || process.env.SECRET, //doesnt allow the env variable. error: express-session deprecated req.secret; provide secret option
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
