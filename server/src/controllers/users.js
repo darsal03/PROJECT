@@ -24,11 +24,11 @@ export const getUserById = async (req, res, next) => {
   try {
     const id = req.params.id
 
-    if (id !== req.user._id.toString() && [ROLES.User].includes(req.user.role)) {
+    if (id !== req.user.id && [ROLES.User].includes(req.user.role)) {
       return res.status(403).json({})
     }
 
-    const foundUser = await Users.findOne({ _id: id })
+    const foundUser = await Users.findById(id)
     if (foundUser) {
       res.status(200).json({ foundUser })
     } else {
@@ -75,7 +75,7 @@ export const updateUser = async (req, res, next) => {
     const id = req.params.id
     const updates = req.body
 
-    if (id !== req.user._id.toString() && [ROLES.User].includes(req.user.role)) {
+    if (id !== req.user.id && [ROLES.User].includes(req.user.role)) {
       return res.status(403).json({})
     } else {
       await Users.findByIdAndUpdate(id, updates, { new: true })
@@ -90,7 +90,7 @@ export const deleteUser = async (req, res, next) => {
   try {
     const id = req.params.id
 
-    if (id !== req.user._id.toString() && [ROLES.User].includes(req.user.role)) {
+    if (id !== req.user.id && [ROLES.User].includes(req.user.role)) {
       return res.status(403).json({})
     } else {
       await Users.findByIdAndDelete(id)
@@ -105,10 +105,15 @@ export const login = async (req, res, next) => {
   try {
     const { username, password } = req.body
     const foundUser = await Users.findOne({ username })
-    const checkPassword = await bcrypt.compare(password, foundUser.hashedPassword)
 
-    if (foundUser && checkPassword) {
-      req.session.userId = foundUser._id
+    if (!foundUser) {
+      return res.status(400).json({ error: 'user not found' })
+    }
+
+    const passwordMatch = await bcrypt.compare(password, foundUser.hashedPassword)
+
+    if (passwordMatch) {
+      req.session.user = foundUser
       res.status(200).json({ foundUser })
     } else {
       return res.status(400).json({ error: 'incorrect username or password' })
@@ -120,16 +125,25 @@ export const login = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   try {
-    const foundUser = await Users.findOne({ _id: req.session.userId })
+    const foundUser = await Users.findById(req.user.id)
     if (foundUser) {
       req.session.destroy((err) => {
         if (err) {
           throw err
         }
+
+        res.status(200).json({})
       })
     }
-    res.status(200).json({})
   } catch (error) {
     next(error)
+  }
+}
+
+export const me = async (req, res) => {
+  if (!req.user) {
+    res.status(400).json({ error: "User session doesn't exist" })
+  } else {
+    res.status(200).json(req.user)
   }
 }

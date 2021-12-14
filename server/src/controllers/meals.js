@@ -5,7 +5,7 @@ import { ROLES } from '../constants.js'
 export const postMeal = async (req, res, next) => {
   try {
     const { name, calories, date: ISOdate } = req.body
-    const userId = req.user._id
+    const userId = req.user.id
     const date = new Date(ISOdate)
 
     const newMeal = await Meals.create({
@@ -47,10 +47,7 @@ export const getMeals = async (req, res, next) => {
       endMinutes,
     } = req.query
 
-    if (
-      userId !== req.user._id.toString() &&
-      [ROLES.User, ROLES.Moderator].includes(req.user.role)
-    ) {
+    if (userId !== req.user.id && [ROLES.User, ROLES.Moderator].includes(req.user.role)) {
       return res.status(403).json({})
     }
 
@@ -76,15 +73,15 @@ export const getMeals = async (req, res, next) => {
 export const deleteMeal = async (req, res, next) => {
   try {
     const id = req.params.id
-    const foundMeal = await Meals.findOne({ _id: id })
+    const foundMeal = await Meals.findById(id)
 
     if (
-      foundMeal.userId.toString() !== req.user._id.toString() &&
+      foundMeal.userId.toString() !== req.user.toString() &&
       [ROLES.User, ROLES.Moderator].includes(req.user.role)
     ) {
       return res.status(403).json({})
     } else {
-      await Meals.deleteOne({ _id: id })
+      await Meals.deleteOne({ id })
       res.status(200).json({})
     }
   } catch (error) {
@@ -95,10 +92,10 @@ export const deleteMeal = async (req, res, next) => {
 export const getMealById = async (req, res, next) => {
   try {
     const id = req.params.id
-    const foundMeal = await Meals.findOne({ _id: id })
+    const foundMeal = await Meals.findById(id)
 
     if (
-      foundMeal.userId.toString() !== req.user._id.toString() &&
+      foundMeal.userId.toString() !== req.user.id &&
       [ROLES.User, ROLES.Moderator].includes(req.user.role)
     ) {
       return res.status(403).json({})
@@ -114,10 +111,10 @@ export const updateMeal = async (req, res, next) => {
   try {
     const id = req.params.id
     const updates = req.body
-    const foundMeal = await Meals.findOne({ _id: id })
+    const foundMeal = await Meals.findById(id)
 
     if (
-      foundMeal.userId.toString() !== req.user._id.toString() &&
+      foundMeal.userId.toString() !== req.user.id &&
       [ROLES.User, ROLES.Moderator].includes(req.user.role)
     ) {
       return res.status(403).json({})
