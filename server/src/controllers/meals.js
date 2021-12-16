@@ -53,11 +53,11 @@ export const getMeals = async (req, res, next) => {
 
     const foundMeals = await Meals.find({
       userId,
-      'parsedDate.day': { $gte: startDay, $lte: endDay },
-      'parsedDate.month': { $gte: startMonth, $lte: endMonth },
-      'parsedDate.year': { $gte: startYear, $lte: endYear },
-      'parsedTime.hour': { $gte: startHour, $lte: endHour },
-      'parsedTime.minute': { $gte: startMinutes, $lte: endMinutes },
+      // 'parsedDate.day': { $gte: startDay, $lte: endDay },
+      // 'parsedDate.month': { $gte: startMonth, $lte: endMonth },
+      // 'parsedDate.year': { $gte: startYear, $lte: endYear },
+      // 'parsedTime.hour': { $gte: startHour, $lte: endHour },
+      // 'parsedTime.minute': { $gte: startMinutes, $lte: endMinutes },
     })
 
     if (foundMeals) {

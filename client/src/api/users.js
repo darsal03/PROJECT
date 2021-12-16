@@ -38,3 +38,7 @@ export const logoutUser = () => {
     .then((res) => res.json())
     .then((data) => data.foundUser)
 }
+
+export const me = () => {
+  return fetch(`${apiUrl}/me`, { credentials: 'include' }).then((res) => res.json())
+}
