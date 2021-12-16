@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 
 import { QueryClient, QueryClientProvider } from 'react-query'
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router } from 'react-router-dom'
 
 import App from './App'
 
@@ -21,9 +21,7 @@ ReactDOM.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <Router>
-        <Routes>
-          <Route path="/" element={<App />}></Route>
-        </Routes>
+        <App />
       </Router>
     </QueryClientProvider>
   </React.StrictMode>,
