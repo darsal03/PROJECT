@@ -45,7 +45,11 @@ const StyledHeader = styled('header', {
 
   variants: {
     auth: {
-      true: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
+      true: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
       false: {
         display: 'flex',
         alignItems: 'center',
@@ -64,10 +68,10 @@ const LogoutButton = styled('button', {
   border: '0.1rem solid white',
   borderRadius: '0.6rem',
   transition: '0.3s ease-in-out',
-  color: 'White',
+  color: '#fff',
 
   '&:hover': {
-    bg: 'white',
+    bg: '#fff',
     color: '#0f005c',
   },
 })

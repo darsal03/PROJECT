@@ -13,14 +13,14 @@ const Box = styled('div', {
   margin: '8rem auto',
   maxWi: '60rem',
   borderRadius: '0.5rem',
-  boxShadow: 'rgba(0, 0, 0, 0.35) 0 0.5rem 1.5rem',
+  boxShadow: ' 0 0.5rem 1.5rem rgba(0, 0, 0, 0.35)',
 })
 
 const H1 = styled('h1', {
   padding: '3rem 0 0 0',
   textAlign: 'center',
   fontSize: '$heading',
-  fontWeight: 'normal',
+  fontWeight: '400',
 })
 
 const Text = styled('p', {
@@ -36,7 +36,7 @@ const Label = styled('label', {
 
 const LinkBackButton = styled('button', {
   fontSize: '$body',
-  color: 'green',
+  color: '#008000',
 })
 
 const Form = styled('form', {
@@ -50,7 +50,7 @@ const Input = styled('input', {
   padding: '1rem',
   height: '5rem',
   fontSize: '$body',
-  border: '0.1rem solid gray',
+  border: '0.1rem solid #808080',
   borderRadius: '1rem',
 })
 
@@ -59,12 +59,12 @@ const FormButton = styled('button', {
   padding: '1rem 7rem',
   fontSize: '$title',
   borderRadius: '1rem',
-  border: '0.1rem solid green',
+  border: '0.1rem solid #008000',
   transition: 'ease-in-out 0.3s',
-  color: 'green',
+  color: '#008000',
   '&:hover': {
-    boxShadow: 'rgba(0, 0, 0, 0.35) 0 0.5rem 1.5rem',
-    bg: 'green',
+    boxShadow: ' 0 0.5rem 1.5rem rgba(0, 0, 0, 0.35)',
+    bg: '#008000',
     color: '#fff',
   },
   '@mobile': {

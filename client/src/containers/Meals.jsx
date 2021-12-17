@@ -5,7 +5,7 @@ import { Meal } from '../components/Meal'
 import { useMeals } from '../hooks/use-meals'
 
 import { styled } from '../stitches.config'
-import { spinner } from '../components/icons/spinner'
+import { SpinIcon } from '../components/icons/Spinner'
 import { keyframes } from '@stitches/react'
 
 const MealsWrapper = styled('div', {
@@ -33,7 +33,7 @@ const Header = styled('h1', {
   margin: '4rem 0',
   textAlign: 'center',
   fontSize: '$heading',
-  fontWeight: 'normal',
+  fontWeight: '400',
 })
 
 export function Meals() {
@@ -43,7 +43,11 @@ export function Meals() {
   return (
     <>
       <Header>{`Hi ${user.username}, here are your meals`}</Header>
-      {isFetching && <Spinner>{spinner}</Spinner>}
+      {isFetching && (
+        <Spinner>
+          <SpinIcon />
+        </Spinner>
+      )}
       {isSuccess && (
         <MealsWrapper>
           {meals.map(({ id, name, calories, parsedDate, parsedTime }) => (

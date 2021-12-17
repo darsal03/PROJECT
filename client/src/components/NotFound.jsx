@@ -15,12 +15,12 @@ const BackButton = styled('button', {
   padding: '1rem 7rem',
   fontSize: '$title',
   borderRadius: '1rem',
-  border: '0.1rem solid green',
+  border: '0.1rem solid #008000',
   transition: 'ease-in-out 0.3s',
-  color: 'green',
+  color: '#008000',
   '&:hover': {
-    boxShadow: 'rgba(0, 0, 0, 0.35) 0 0.5rem 1.5rem',
-    bg: 'green',
+    boxShadow: ' 0 0.5rem 1.5rem rgba(0, 0, 0, 0.35)',
+    bg: '#008000',
     color: '#fff',
   },
 })

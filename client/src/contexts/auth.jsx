@@ -5,7 +5,7 @@ import { useLogin } from '../hooks/use-login'
 import { useLogout } from '../hooks/use-logout'
 import { me } from '../api/users'
 
-import { spinner } from '../components/icons/spinner'
+import { SpinIcon } from '../components/icons/Spinner'
 import { Spinner } from '../containers/Meals'
 
 export const AuthContext = createContext()
@@ -46,7 +46,11 @@ export function AuthProvider({ children }) {
   )
 
   if (isUserLoading) {
-    return <Spinner>{spinner}</Spinner>
+    return (
+      <Spinner>
+        <SpinIcon />
+      </Spinner>
+    )
   }
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

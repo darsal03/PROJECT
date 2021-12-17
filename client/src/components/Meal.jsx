@@ -1,15 +1,15 @@
 import { useState } from 'react'
 import { styled } from '../stitches.config'
-import { doneIcon } from './icons/checkmark'
-import { deleteIcon } from './icons/delete'
-import { foodIcon } from './icons/foodIcon'
+import { DoneIcon } from './icons/Checkmark'
+import { DeleteIcon } from './icons/Delete'
+import { FoodIcon } from './icons/FoodIcon'
 
 const MealWrapper = styled('div', {
   width: '35rem',
   height: '35rem',
   margin: '2rem',
   borderRadius: '0.5rem',
-  boxShadow: 'rgba(0.35, 0.35, 0.35, 0.35) 0 0.5rem 1.1rem',
+  boxShadow: ' 0 0.5rem 1.1rem rgba(0.35, 0.35, 0.35, 0.35)',
   '@mobile': {
     width: '45rem',
     height: '45rem',
@@ -20,7 +20,7 @@ const MealTitle = styled('h1', {
   textAlign: 'center',
   margin: '1rem',
   fontSize: '$heading',
-  fontWeight: 'normal',
+  fontWeight: '400',
 })
 
 const MealDetail = styled('p', {
@@ -52,11 +52,11 @@ const CalorieText = styled('p', {
     calories: {
       over: {
         textAlign: 'center',
-        color: 'Red',
+        color: '#FF0000',
       },
       under: {
         textAlign: 'center',
-        color: 'green',
+        color: '#008000',
       },
     },
   },
@@ -70,7 +70,7 @@ export function Meal({ meal }) {
   return (
     <MealWrapper>
       <MealTitle>
-        {foodIcon} {name}
+        <FoodIcon /> {name}
       </MealTitle>
       <MealDetail>--{`Calories = ${calories}`}</MealDetail>
       <MealDetail>--{`Eaten on : ${day}/${month}/${year}`}</MealDetail>
@@ -81,8 +81,12 @@ export function Meal({ meal }) {
         </CalorieText>
       </MealDetail>
       <ButtonWrapper>
-        <ActionButton>{doneIcon} </ActionButton>
-        <ActionButton>{deleteIcon} </ActionButton>
+        <ActionButton>
+          <DoneIcon />{' '}
+        </ActionButton>
+        <ActionButton>
+          <DeleteIcon />{' '}
+        </ActionButton>
       </ButtonWrapper>
     </MealWrapper>
   )
