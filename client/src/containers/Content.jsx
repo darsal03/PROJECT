@@ -1,33 +1,29 @@
+import React from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+
 import { useAuth } from '../contexts/auth'
 import { AuthContainer } from './Login'
+import { Meals } from './Meals'
+import { NotFound } from '../components/NotFound'
 
-import React from 'react'
-
-function Dashboard({ onClick }) {
-  //im using this component for testing sake only//
-  const { user, logout } = useAuth()
-
+function UnAuthApp() {
   return (
     <>
-      <h1>{`Hello ${user.username}`}</h1>
-      <button onClick={onClick}>MEALS</button>
-      <button onClick={() => logout()}>Logout</button>
+      <Routes>
+        <Route path="/" element={<AuthContainer />} />
+        <Route path="*" element={<Navigate replace to="/" />} />
+      </Routes>
     </>
   )
 }
 
-function UnAuthedApp() {
+function AuthApp() {
   return (
     <>
-      <AuthContainer />
-    </>
-  )
-}
-
-function AuthedApp() {
-  return (
-    <>
-      <Dashboard />
+      <Routes>
+        <Route path="/" element={<Meals />}></Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </>
   )
 }
@@ -35,5 +31,5 @@ function AuthedApp() {
 export function Content() {
   const { user } = useAuth()
 
-  return <>{user ? <AuthedApp /> : <UnAuthedApp />}</>
+  return <>{user ? <AuthApp /> : <UnAuthApp />}</>
 }

@@ -3,6 +3,10 @@ import { useQuery } from 'react-query'
 
 import { useLogin } from '../hooks/use-login'
 import { useLogout } from '../hooks/use-logout'
+import { me } from '../api/users'
+
+import { SpinIcon } from '../components/icons/Spinner'
+import { Spinner } from '../containers/Meals'
 
 export const AuthContext = createContext()
 export const useAuth = () => useContext(AuthContext)
@@ -26,10 +30,7 @@ export function AuthProvider({ children }) {
 
   const { isFetching: isUserLoading } = useQuery({
     queryKey: 'me',
-    queryFn: async () =>
-      fetch(process.env.REACT_APP_API_BASE_URL + '/me', { credentials: 'include' }).then((res) =>
-        res.json()
-      ),
+    queryFn: me,
     onSuccess: (user) => {
       setUser(user)
     },
@@ -45,7 +46,11 @@ export function AuthProvider({ children }) {
   )
 
   if (isUserLoading) {
-    return <div>This should be a huge spinner</div>
+    return (
+      <Spinner>
+        <SpinIcon />
+      </Spinner>
+    )
   }
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
