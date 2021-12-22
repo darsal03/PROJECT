@@ -43,7 +43,7 @@ const ButtonWrapper = styled('div', {
 const ActionButton = styled('button', {
   margin: '0 2.5rem',
   transition: '0.3s ease-in-out',
-  fill: '	#000000',
+  fill: '#000000',
   '&:hover': {
     fill: 'Green',
   },

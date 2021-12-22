@@ -87,20 +87,20 @@ const FormButton = styled('button', {
 
 export function ProfilePage() {
   const { user } = useAuth()
-  const { username, email } = user
+
   return (
     <ProfilePageWrapper>
       <Avatar>
         <Picture />
-        <UserName>{username}</UserName>
+        <UserName>{user.username}</UserName>
       </Avatar>
       <UserDets>
         <UserDetailsHeading>User Info</UserDetailsHeading>
         <Form>
           <Label for="username">Username:</Label>
-          <Input name="userame" value={username} />
+          <Input name="userame" value={user.username} />
           <Label for="email">Email:</Label>
-          <Input name="email" value={email} />
+          <Input name="email" value={user.email} />
           <Label for="calorieLimit">Calorielimit:</Label>
           <Input name="calorieLimit" value="1000" />
           <FormButton>Save</FormButton>

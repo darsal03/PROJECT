@@ -16,20 +16,16 @@ function Avatar({ onClick }) {
   )
 }
 
-function AvatarBox({ onClick, handleOnOutsideClick }) {
+function AvatarBox({ onClick, onClickOutside }) {
   const modalRef = useRef()
 
-  const handler = () => {
-    handleOnOutsideClick()
-  }
-
-  useClickOutside(modalRef, handler)
+  useClickOutside(modalRef, onClickOutside)
 
   return (
     <MenuBox ref={modalRef}>
       <ul>
         <MenuItem>
-          <Link to={'/profile'}>Profile Page</Link>
+          <Link to="/profile">Profile Page</Link>
         </MenuItem>
         <MenuItem>
           <button onClick={onClick}>Log Out</button>
@@ -50,12 +46,12 @@ function NonAuthNav() {
 }
 
 function AuthNav() {
-  const [modalOpen, setModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { logout } = useAuth()
 
   const handleModalToggle = () => {
-    setModalOpen(!modalOpen)
+    setIsModalOpen(!isModalOpen)
   }
 
   return (
@@ -64,9 +60,7 @@ function AuthNav() {
         <Logo width="50" height="50" />
       </Link>
       <Avatar onClick={handleModalToggle} />
-      {modalOpen === true ? (
-        <AvatarBox onClick={logout} handleOnOutsideClick={() => setModalOpen(false)} />
-      ) : null}
+      {isModalOpen && <AvatarBox onClick={logout} onClickOutside={() => setIsModalOpen(false)} />}
     </nav>
   )
 }
@@ -111,7 +105,6 @@ const AvatarButton = styled('button', {
   borderRadius: '0.6rem',
   transition: '0.3s ease-in-out',
   fill: '#fff',
-  bg: 'rgb(15, 0, 92)',
   '&:hover': {
     color: '#0f005c',
     fill: '#008000',
