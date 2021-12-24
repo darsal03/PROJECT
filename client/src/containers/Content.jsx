@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/auth'
 import { AuthContainer } from './Login'
 import { Meals } from './Meals'
 import { NotFound } from '../components/NotFound'
+import { ProfilePage } from '../containers/ProfilePage'
 
 function UnAuthApp() {
   return (
@@ -22,6 +23,7 @@ function AuthApp() {
     <>
       <Routes>
         <Route path="/" element={<Meals />}></Route>
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
