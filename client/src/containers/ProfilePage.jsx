@@ -1,5 +1,7 @@
 import { styled } from '../stitches.config'
 import { useAuth } from '../contexts/auth'
+import { useState } from 'react'
+import { useUpdateDets } from '../hooks/use-updateDets'
 
 const ProfilePageWrapper = styled('div', {
   display: 'flex',
@@ -51,7 +53,7 @@ const UserDetailsHeading = styled('h1', {
   fontWeight: '400',
 })
 
-const Form = styled({
+const Form = styled('form', {
   display: 'flex',
   flexDirection: 'column',
 })
@@ -86,7 +88,46 @@ const FormButton = styled('button', {
 })
 
 export function ProfilePage() {
-  const { user } = useAuth()
+  const { user, setUser } = useAuth()
+
+  const { username, email } = user
+
+  const [updatedUser, setUpdatedUser] = useState({
+    username,
+    email,
+    calorieLimit: null,
+    //i will add file in the future,first i want to check if this even works
+  })
+
+  const [isEditing, setIsEditing] = useState(false)
+
+  const { mutate: update } = useUpdateDets()
+
+  const handleChange = (e) => {
+    setUpdatedUser((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  const handleSumbit = (e) => {
+    e.preventDefault()
+
+    if (updatedUser.username.length < 9) {
+      return alert('username must be over 9 characters')
+    }
+
+    if (updatedUser.email.length < 20) {
+      return alert('email must be over 20 characters')
+    }
+
+    if (updatedUser.calorieLimit < 1000 || updatedUser.calorieLimit > 10000) {
+      return alert('calories must be over 1000 (and under 10000)')
+    }
+
+    update(updatedUser, {
+      onSuccess: (updatedUser) => {
+        setUser(updatedUser)
+      },
+    })
+  }
 
   return (
     <ProfilePageWrapper>
@@ -96,13 +137,33 @@ export function ProfilePage() {
       </Avatar>
       <UserDets>
         <UserDetailsHeading>User Info</UserDetailsHeading>
-        <Form>
+        <Form onSubmit={handleSumbit}>
           <Label for="username">Username:</Label>
-          <Input name="userame" value={user.username} />
+          <Input
+            name="username"
+            value={isEditing ? null : user.username}
+            onFocus={() => setIsEditing(true)}
+            onChange={handleChange}
+          />
           <Label for="email">Email:</Label>
-          <Input name="email" value={user.email} />
+          <Input
+            name="email"
+            value={isEditing ? null : user.email}
+            onFocus={() => setIsEditing(true)}
+            onChange={handleChange}
+          />
           <Label for="calorieLimit">Calorielimit:</Label>
-          <Input name="calorieLimit" value="1000" />
+          <Input
+            name="calorieLimit"
+            type="number"
+            placeholder={
+              user.calorieLimit == null ? 'Set your desired calorie limit' : user.calorieLimit
+            }
+            value={isEditing ? null : user.calorieLimit}
+            onFocus={() => setIsEditing(true)}
+            onChange={handleChange}
+          />
+          <input type="file" name="file" />
           <FormButton>Save</FormButton>
         </Form>
       </UserDets>

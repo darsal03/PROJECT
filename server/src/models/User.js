@@ -22,6 +22,12 @@ const userSchema = new Schema({
     default: 'user',
     enum: ['user', 'moderator', 'admin'],
   },
+  calorieLimit: {
+    type: Number,
+  },
+  imageUrl: {
+    type: String,
+  },
 })
 
 userSchema.set('toJSON', {
