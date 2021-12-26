@@ -42,3 +42,16 @@ export const logoutUser = () => {
 export const me = () => {
   return fetch(`${apiUrl}/me`, { credentials: 'include' }).then((res) => res.json())
 }
+
+export const updateProfile = (updatedProfile) => {
+  return fetch(`${apiUrl}/users`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updatedProfile),
+  })
+    .then((res) => res.json())
+    .then((data) => data.updatedUser)
+}

@@ -15,6 +15,7 @@ import {
   updateUser,
   deleteUser,
   me,
+  updateProfile,
 } from './controllers/users.js'
 
 import { postMeal, getMeals, deleteMeal, getMealById, updateMeal } from './controllers/meals.js'
@@ -32,6 +33,7 @@ router.post('/logout', auth, logout)
 router.patch('/users/:id', auth, updateUser)
 router.delete('/users/:id', auth, deleteUser)
 router.get('/me', auth, me)
+router.put('/users', auth, updateProfile)
 
 /*
  Meals 

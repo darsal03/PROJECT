@@ -142,8 +142,22 @@ export const logout = async (req, res, next) => {
 
 export const me = async (req, res) => {
   if (!req.user) {
-    res.status(400).json({ error: "User session doesn't exist" })
+    return res.status(400).json({ error: "User session doesn't exist" })
   } else {
-    res.status(200).json(req.user)
+    return res.status(200).json(req.user)
+  }
+}
+
+export const updateProfile = async (req, res, next) => {
+  try {
+    const updatedProfile = req.body
+    if (req.user) {
+      const updatedUser = await Users.findByIdAndUpdate(req.user.id, updatedProfile, { new: true })
+      return res.json(updatedUser)
+    } else {
+      return res.status(400).json({})
+    }
+  } catch (error) {
+    next(error)
   }
 }
