@@ -1,3 +1,6 @@
+import { useState } from 'react'
+import { useUpdateUser } from '../hooks/use-update-user'
+
 import { styled } from '../stitches.config'
 import { useAuth } from '../contexts/auth'
 
@@ -51,7 +54,7 @@ const UserDetailsHeading = styled('h1', {
   fontWeight: '400',
 })
 
-const Form = styled({
+const Form = styled('form', {
   display: 'flex',
   flexDirection: 'column',
 })
@@ -87,23 +90,69 @@ const FormButton = styled('button', {
 
 export function ProfilePage() {
   const { user } = useAuth()
+  const { username, email, id, calorieLimit, image } = user
+
+  const [updatedUser, setUpdatedUser] = useState({
+    id,
+    username,
+    email,
+    calorieLimit,
+    image,
+  })
+  const [isEditing, setIsEditing] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const { mutate: update } = useUpdateUser()
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    return update(updatedUser)
+  }
+
+  const handleChange = (e) => {
+    return setUpdatedUser((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  }
 
   return (
     <ProfilePageWrapper>
       <Avatar>
-        <Picture />
+        <Picture>
+          <img src={image} alt="avatar" />
+        </Picture>
         <UserName>{user.username}</UserName>
       </Avatar>
       <UserDets>
         <UserDetailsHeading>User Info</UserDetailsHeading>
-        <Form>
-          <Label for="username">Username:</Label>
-          <Input name="userame" value={user.username} />
-          <Label for="email">Email:</Label>
-          <Input name="email" value={user.email} />
-          <Label for="calorieLimit">Calorielimit:</Label>
-          <Input name="calorieLimit" value="1000" />
-          <FormButton>Save</FormButton>
+        <Form onSubmit={handleSubmit}>
+          <Label htmlFor="username">Username:</Label>
+          <Input
+            name="username"
+            value={isEditing ? null : user.username}
+            onChange={handleChange}
+            onFocus={() => setIsEditing(true)}
+          />
+          <Label htmlFor="email">Email:</Label>
+          <Input
+            name="email"
+            value={isEditing ? null : user.email}
+            onChange={handleChange}
+            onFocus={() => setIsEditing(true)}
+          />
+          <Label htmlFor="calorieLimit">Calorielimit:</Label>
+          <Input
+            name="calorieLimit"
+            type="number"
+            placeholder="set calorie limit"
+            value={isEditing ? null : updatedUser.calorieLimit}
+            onChange={handleChange}
+            onFocus={() => setIsEditing(true)}
+          />
+          <Label htmlFor="image">Image:</Label>
+          <input name="image" type="file" onChange={handleChange} />
+          <FormButton type="submit" disabled={isSubmitting ? true : false}>
+            Save
+          </FormButton>
         </Form>
       </UserDets>
     </ProfilePageWrapper>
