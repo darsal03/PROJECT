@@ -73,13 +73,18 @@ export const createUser = async (req, res, next) => {
 export const updateUser = async (req, res, next) => {
   try {
     const id = req.params.id
-    const updates = req.body
+    const { username, email, calorieLimit, image } = req.body
 
     if (id !== req.user.id && [ROLES.User].includes(req.user.role)) {
       return res.status(403).json({})
     } else {
-      await Users.findByIdAndUpdate(id, updates, { new: true })
-      res.status(200).json({})
+      const updatedUser = await Users.findByIdAndUpdate(
+        id,
+        { username, email, calorieLimit, image },
+        { new: true }
+      )
+      req.session.user = updatedUser
+      res.status(200).json()
     }
   } catch (error) {
     next(error.message)
