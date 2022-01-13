@@ -43,11 +43,11 @@ export const me = () => {
   return fetch(`${apiUrl}/me`, { credentials: 'include' }).then((res) => res.json())
 }
 
-export const updateUser = ({ username, email, calorieLimit, image, id }) => {
+export const updateUser = ({ username, email, calorieLimit, image, id, fileName }) => {
   return fetch(`${apiUrl}/users/${id}`, {
     method: 'PUT',
     credentials: 'include',
-    body: JSON.stringify({ username, email, calorieLimit, image }),
+    body: JSON.stringify({ username, email, calorieLimit, image, fileName }),
     headers: {
       'Content-Type': 'application/json',
     },

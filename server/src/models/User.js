@@ -23,6 +23,9 @@ const userSchema = new Schema({
   image: {
     type: String,
   },
+  fileName: {
+    type: String,
+  },
   role: {
     type: String,
     default: 'user',
