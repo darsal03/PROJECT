@@ -23,8 +23,19 @@ const Picture = styled('div', {
   margin: '0 5rem',
   width: '30rem',
   height: '30rem',
-  border: '0.1rem solid #008000',
-  borderRadius: '20rem',
+})
+
+const Img = styled('img', {
+  width: '30rem',
+  height: '30rem',
+  borderRadius: '30rem',
+})
+
+const NoPhoto = styled('h2', {
+  padding: '14rem 0 0 0',
+  fontSize: '$body',
+  fontWeight: '400',
+  textAlign: 'center',
 })
 
 const UserName = styled('h1', {
@@ -69,6 +80,10 @@ const Input = styled('input', {
   borderRadius: '1rem',
 })
 
+const FileInput = styled('input', {
+  fontSize: '$body',
+})
+
 const Label = styled('label', {
   fontSize: '$body',
 })
@@ -89,36 +104,72 @@ const FormButton = styled('button', {
 })
 
 export function ProfilePage() {
-  const { user } = useAuth()
-  const { username, email, id, calorieLimit, image } = user
+  const auth = useAuth()
 
-  const [updatedUser, setUpdatedUser] = useState({
-    id,
-    username,
-    email,
-    calorieLimit,
-    image,
+  const [user, setUser] = useState({
+    id: auth.user.id,
+    username: auth.user.username,
+    email: auth.user.email,
+    calorieLimit: !auth.user.calorieLimit ? undefined : auth.user.calorieLimit,
+    image: !auth.user.image ? undefined : auth.user.image,
+    fileName: !auth.user.fileName ? undefined : auth.user.fileName,
   })
   const [isEditing, setIsEditing] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const { mutate: update } = useUpdateUser()
+  const { mutate: update, isLoading } = useUpdateUser()
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    return update(updatedUser)
+  const handleFileToBase64 = (file) => {
+    const reader = new FileReader()
+
+    if (file && file.type.match('image *')) {
+      reader.readAsDataURL(file)
+    }
+
+    reader.onload = () => {
+      setUser((prev) => ({
+        ...prev,
+        image: reader.result,
+        fileName: file.name,
+      }))
+    }
+    reader.onerror = (err) => {
+      throw err
+    }
   }
 
-  const handleChange = (e) => {
-    return setUpdatedUser((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    if (
+      auth.user.username === user.username &&
+      auth.user.email === user.email &&
+      auth.user.calorieLimit === user.calorieLimit &&
+      auth.user.image === user.image
+    ) {
+      setIsEditing(false)
+      return alert('you must change something in order to save')
+    }
+
+    update(user)
+  }
+
+  const handleChange = (event) => {
+    if (event.target.files && event.target.files[0].name !== user.fileName) {
+      handleFileToBase64(event.target.files[0])
+    }
+
+    setUser((prev) => ({ ...prev, [event.target.name]: event.target.value }))
   }
 
   return (
     <ProfilePageWrapper>
       <Avatar>
         <Picture>
-          <img src={image} alt="avatar" />
+          {user.image === undefined ? (
+            <NoPhoto>Add a photo </NoPhoto>
+          ) : (
+            <Img src={user.image} alt="Avatar" />
+          )}
         </Picture>
         <UserName>{user.username}</UserName>
       </Avatar>
@@ -128,14 +179,14 @@ export function ProfilePage() {
           <Label htmlFor="username">Username:</Label>
           <Input
             name="username"
-            value={isEditing ? null : user.username}
+            value={user.username}
             onChange={handleChange}
             onFocus={() => setIsEditing(true)}
           />
           <Label htmlFor="email">Email:</Label>
           <Input
             name="email"
-            value={isEditing ? null : user.email}
+            value={user.email}
             onChange={handleChange}
             onFocus={() => setIsEditing(true)}
           />
@@ -144,13 +195,18 @@ export function ProfilePage() {
             name="calorieLimit"
             type="number"
             placeholder="set calorie limit"
-            value={isEditing ? null : updatedUser.calorieLimit}
+            value={user.calorieLimit}
             onChange={handleChange}
             onFocus={() => setIsEditing(true)}
           />
           <Label htmlFor="image">Image:</Label>
-          <input name="image" type="file" onChange={handleChange} />
-          <FormButton type="submit" disabled={isSubmitting ? true : false}>
+          <FileInput
+            name="image"
+            type="file"
+            onFocus={() => setIsEditing(true)}
+            onChange={handleChange}
+          />
+          <FormButton type="submit" disabled={isEditing ? false : true || (isLoading && true)}>
             Save
           </FormButton>
         </Form>
