@@ -5,7 +5,7 @@ import { useLogin } from '../hooks/use-login'
 import { useLogout } from '../hooks/use-logout'
 import { me } from '../api/users'
 
-import { SpinIcon } from '../components/icons/Spinner'
+import { SpinIcon } from '../components/icons/spinner'
 import { Spinner } from '../containers/Meals'
 
 export const AuthContext = createContext()

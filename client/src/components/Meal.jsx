@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { styled } from '../stitches.config'
-import { DoneIcon } from './icons/Checkmark'
-import { DeleteIcon } from './icons/Delete'
-import { FoodIcon } from './icons/FoodIcon'
+import { DoneIcon } from './icons/checkmark'
+import { DeleteIcon } from './icons/delete'
+import { FoodIcon } from './icons/foodIcon'
 
 const MealWrapper = styled('div', {
   width: '35rem',
@@ -52,7 +52,7 @@ const ActionButton = styled('button', {
   },
 })
 
-const CalorieText = styled('p', {
+const CalorieText = styled('span', {
   variants: {
     calories: {
       over: {

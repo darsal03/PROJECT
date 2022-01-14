@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useUpdateUser } from '../hooks/use-update-user'
 
 import { styled } from '../stitches.config'
@@ -26,9 +26,11 @@ const Picture = styled('div', {
 })
 
 const Img = styled('img', {
-  width: '30rem',
-  height: '30rem',
-  borderRadius: '30rem',
+  width: '10rem',
+  height: '10rem',
+  borderRadius: '50%',
+  objectFit: 'cover',
+  objectPosition: 'center',
 })
 
 const NoPhoto = styled('h2', {
@@ -105,35 +107,37 @@ const FormButton = styled('button', {
 
 export function ProfilePage() {
   const auth = useAuth()
+  const imageInputRef = useRef()
 
   const [user, setUser] = useState({
     id: auth.user.id,
     username: auth.user.username,
     email: auth.user.email,
     calorieLimit: !auth.user.calorieLimit ? undefined : auth.user.calorieLimit,
-    image: !auth.user.image ? undefined : auth.user.image,
-    fileName: !auth.user.fileName ? undefined : auth.user.fileName,
   })
   const [isEditing, setIsEditing] = useState(false)
 
   const { mutate: update, isLoading } = useUpdateUser()
 
-  const handleFileToBase64 = (file) => {
+  const handleAvatarChange = (event) => {
     const reader = new FileReader()
 
-    if (file && file.type.match('image *')) {
-      reader.readAsDataURL(file)
-    }
-
     reader.onload = () => {
-      setUser((prev) => ({
-        ...prev,
-        image: reader.result,
-        fileName: file.name,
-      }))
+      update({ id: auth.user.id, image: reader.result })
     }
     reader.onerror = (err) => {
-      throw err
+      console.error({ err })
+    }
+
+    if (event.target.files) {
+      const [file] = event.target.files
+      const sizeInKB = file.size / 1024
+      if (sizeInKB > 500) {
+        alert('Image size is too big')
+        imageInputRef.current.value = ''
+      } else {
+        reader.readAsDataURL(event.target.files[0])
+      }
     }
   }
 
@@ -154,10 +158,6 @@ export function ProfilePage() {
   }
 
   const handleChange = (event) => {
-    if (event.target.files && event.target.files[0].name !== user.fileName) {
-      handleFileToBase64(event.target.files[0])
-    }
-
     setUser((prev) => ({ ...prev, [event.target.name]: event.target.value }))
   }
 
@@ -165,10 +165,10 @@ export function ProfilePage() {
     <ProfilePageWrapper>
       <Avatar>
         <Picture>
-          {user.image === undefined ? (
-            <NoPhoto>Add a photo </NoPhoto>
+          {Boolean(auth.user.image) != null ? (
+            <Img src={auth.user.image} alt="Avatar" />
           ) : (
-            <Img src={user.image} alt="Avatar" />
+            <NoPhoto>Add a photo </NoPhoto>
           )}
         </Picture>
         <UserName>{user.username}</UserName>
@@ -201,10 +201,11 @@ export function ProfilePage() {
           />
           <Label htmlFor="image">Image:</Label>
           <FileInput
+            ref={imageInputRef}
             name="image"
             type="file"
-            onFocus={() => setIsEditing(true)}
-            onChange={handleChange}
+            accept="image/*"
+            onChange={handleAvatarChange}
           />
           <FormButton type="submit" disabled={isEditing ? false : true || (isLoading && true)}>
             Save
