@@ -5,7 +5,7 @@ import { Meal } from '../components/Meal'
 import { useMeals } from '../hooks/use-meals'
 
 import { styled } from '../stitches.config'
-import { SpinIcon } from '../components/icons/Spinner'
+import { SpinIcon } from '../components/icons/spinner'
 import { keyframes } from '@stitches/react'
 
 const MealsWrapper = styled('div', {

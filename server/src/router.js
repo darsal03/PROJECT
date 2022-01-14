@@ -29,7 +29,7 @@ router.post('/users', createUser)
 router.get('/users/:id', auth, getUserById)
 router.post('/login', login)
 router.post('/logout', auth, logout)
-router.patch('/users/:id', auth, updateUser)
+router.put('/users/:id', auth, updateUser)
 router.delete('/users/:id', auth, deleteUser)
 router.get('/me', auth, me)
 

@@ -1,3 +1,6 @@
+import { useRef, useState } from 'react'
+import { useUpdateUser } from '../hooks/use-update-user'
+
 import { styled } from '../stitches.config'
 import { useAuth } from '../contexts/auth'
 
@@ -20,8 +23,21 @@ const Picture = styled('div', {
   margin: '0 5rem',
   width: '30rem',
   height: '30rem',
-  border: '0.1rem solid #008000',
-  borderRadius: '20rem',
+})
+
+const Img = styled('img', {
+  width: '10rem',
+  height: '10rem',
+  borderRadius: '50%',
+  objectFit: 'cover',
+  objectPosition: 'center',
+})
+
+const NoPhoto = styled('h2', {
+  padding: '14rem 0 0 0',
+  fontSize: '$body',
+  fontWeight: '400',
+  textAlign: 'center',
 })
 
 const UserName = styled('h1', {
@@ -51,7 +67,7 @@ const UserDetailsHeading = styled('h1', {
   fontWeight: '400',
 })
 
-const Form = styled({
+const Form = styled('form', {
   display: 'flex',
   flexDirection: 'column',
 })
@@ -64,6 +80,10 @@ const Input = styled('input', {
   fontSize: '$body',
   border: '0.1rem solid #808080',
   borderRadius: '1rem',
+})
+
+const FileInput = styled('input', {
+  fontSize: '$body',
 })
 
 const Label = styled('label', {
@@ -86,24 +106,110 @@ const FormButton = styled('button', {
 })
 
 export function ProfilePage() {
-  const { user } = useAuth()
+  const auth = useAuth()
+  const imageInputRef = useRef()
+
+  const [user, setUser] = useState({
+    id: auth.user.id,
+    username: auth.user.username,
+    email: auth.user.email,
+    calorieLimit: !auth.user.calorieLimit ? undefined : auth.user.calorieLimit,
+  })
+  const [isEditing, setIsEditing] = useState(false)
+
+  const { mutate: update, isLoading } = useUpdateUser()
+
+  const handleAvatarChange = (event) => {
+    const reader = new FileReader()
+
+    reader.onload = () => {
+      update({ id: auth.user.id, image: reader.result })
+    }
+    reader.onerror = (err) => {
+      console.error({ err })
+    }
+
+    if (event.target.files) {
+      const [file] = event.target.files
+      const sizeInKB = file.size / 1024
+      if (sizeInKB > 500) {
+        alert('Image size is too big')
+        imageInputRef.current.value = ''
+      } else {
+        reader.readAsDataURL(event.target.files[0])
+      }
+    }
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    if (
+      auth.user.username === user.username &&
+      auth.user.email === user.email &&
+      auth.user.calorieLimit === user.calorieLimit &&
+      auth.user.image === user.image
+    ) {
+      setIsEditing(false)
+      return alert('you must change something in order to save')
+    }
+
+    update(user)
+  }
+
+  const handleChange = (event) => {
+    setUser((prev) => ({ ...prev, [event.target.name]: event.target.value }))
+  }
 
   return (
     <ProfilePageWrapper>
       <Avatar>
-        <Picture />
+        <Picture>
+          {Boolean(auth.user.image) != null ? (
+            <Img src={auth.user.image} alt="Avatar" />
+          ) : (
+            <NoPhoto>Add a photo </NoPhoto>
+          )}
+        </Picture>
         <UserName>{user.username}</UserName>
       </Avatar>
       <UserDets>
         <UserDetailsHeading>User Info</UserDetailsHeading>
-        <Form>
-          <Label for="username">Username:</Label>
-          <Input name="userame" value={user.username} />
-          <Label for="email">Email:</Label>
-          <Input name="email" value={user.email} />
-          <Label for="calorieLimit">Calorielimit:</Label>
-          <Input name="calorieLimit" value="1000" />
-          <FormButton>Save</FormButton>
+        <Form onSubmit={handleSubmit}>
+          <Label htmlFor="username">Username:</Label>
+          <Input
+            name="username"
+            value={user.username}
+            onChange={handleChange}
+            onFocus={() => setIsEditing(true)}
+          />
+          <Label htmlFor="email">Email:</Label>
+          <Input
+            name="email"
+            value={user.email}
+            onChange={handleChange}
+            onFocus={() => setIsEditing(true)}
+          />
+          <Label htmlFor="calorieLimit">Calorielimit:</Label>
+          <Input
+            name="calorieLimit"
+            type="number"
+            placeholder="set calorie limit"
+            value={user.calorieLimit}
+            onChange={handleChange}
+            onFocus={() => setIsEditing(true)}
+          />
+          <Label htmlFor="image">Image:</Label>
+          <FileInput
+            ref={imageInputRef}
+            name="image"
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
+          />
+          <FormButton type="submit" disabled={isEditing ? false : true || (isLoading && true)}>
+            Save
+          </FormButton>
         </Form>
       </UserDets>
     </ProfilePageWrapper>

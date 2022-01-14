@@ -17,6 +17,15 @@ const userSchema = new Schema({
     maxlength: [100, 'should not exceed 100 characters'],
     required: [true, 'email is required'],
   },
+  calorieLimit: {
+    type: Number,
+  },
+  image: {
+    type: String,
+  },
+  fileName: {
+    type: String,
+  },
   role: {
     type: String,
     default: 'user',
