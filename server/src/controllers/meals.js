@@ -37,9 +37,9 @@ export const getMeals = async (req, res, next) => {
       userId,
       startDay,
       startMonth,
+      startYear,
       startHour,
       startMinutes,
-      startYear,
       endDay,
       endMonth,
       endYear,
@@ -51,14 +51,52 @@ export const getMeals = async (req, res, next) => {
       return res.status(403).json({})
     }
 
-    const foundMeals = await Meals.find({
-      userId,
-      // 'parsedDate.day': { $gte: startDay, $lte: endDay },
-      // 'parsedDate.month': { $gte: startMonth, $lte: endMonth },
-      // 'parsedDate.year': { $gte: startYear, $lte: endYear },
-      // 'parsedTime.hour': { $gte: startHour, $lte: endHour },
-      // 'parsedTime.minute': { $gte: startMinutes, $lte: endMinutes },
-    })
+    let query = { userId }
+
+    if (startYear) query = { ...query, 'parsedDate.year': { $gte: startYear } }
+    if (endYear) {
+      query = {
+        ...query,
+        'parsedDate.year': startYear ? { $gte: startYear, $lte: endYear } : { $lte: endYear },
+      }
+    }
+
+    if (startDay) query = { ...query, 'parsedDate.day': { $gte: startDay } }
+    if (endDay) {
+      query = {
+        ...query,
+        'parsedDate.day': startDay ? { $gte: startDay, $lte: endDay } : { $lte: endDay },
+      }
+    }
+
+    if (startMonth) query = { ...query, 'parsedDate.month': { $gte: startMonth } }
+    if (endMonth) {
+      query = {
+        ...query,
+        'parsedDate.month': startMonth ? { $gte: startMonth, $lte: endMonth } : { $lte: endMonth },
+      }
+    }
+
+    if (startHour) query = { ...query, 'parsedTime.hour': { $gte: startHour } }
+    if (endHour) {
+      query = {
+        ...query,
+        'parsedTime.hour': startHour ? { $gte: startHour, $lte: endHour } : { $lte: endHour },
+      }
+    }
+    if (startMinutes) query = { ...query, 'parsedTime.minute': { $gte: startMinutes } }
+    if (endMinutes) {
+      query = {
+        ...query,
+        'parsedTime.minute': startMinutes
+          ? { $gte: startMinutes, $lte: endMinutes }
+          : { $lte: endMinutes },
+      }
+    }
+
+    console.log(query)
+
+    const foundMeals = await Meals.find(query)
 
     if (foundMeals) {
       res.status(200).json({ foundMeals })
@@ -67,6 +105,24 @@ export const getMeals = async (req, res, next) => {
     }
   } catch (error) {
     next(error)
+  }
+}
+
+export const getMealById = async (req, res, next) => {
+  try {
+    const id = req.params.id
+    const foundMeal = await Meals.findById(id)
+
+    if (
+      foundMeal.userId.toString() !== req.user.id &&
+      [ROLES.User, ROLES.Moderator].includes(req.user.role)
+    ) {
+      return res.status(403).json({})
+    } else {
+      res.status(200).json({ foundMeal })
+    }
+  } catch (error) {
+    next(error.message)
   }
 }
 
@@ -83,24 +139,6 @@ export const deleteMeal = async (req, res, next) => {
     } else {
       await Meals.deleteOne({ id })
       res.status(200).json({})
-    }
-  } catch (error) {
-    next(error.message)
-  }
-}
-
-export const getMealById = async (req, res, next) => {
-  try {
-    const id = req.params.id
-    const foundMeal = await Meals.findById(id)
-
-    if (
-      foundMeal.userId.toString() !== req.user.id &&
-      [ROLES.User, ROLES.Moderator].includes(req.user.role)
-    ) {
-      return res.status(403).json({})
-    } else {
-      res.status(200).json({ foundMeal })
     }
   } catch (error) {
     next(error.message)
