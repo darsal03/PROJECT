@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { styled } from '../stitches.config'
-import { DoneIcon } from './icons/checkmark'
-import { DeleteIcon } from './icons/delete'
-import { FoodIcon } from './icons/foodIcon'
+import { DoneIcon } from './icons/Checkmark'
+import { DeleteIcon } from './icons/Delete'
+import { FoodIcon } from './icons/FoodIcon'
 
 const MealWrapper = styled('div', {
   width: '35rem',

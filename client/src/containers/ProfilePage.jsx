@@ -147,8 +147,7 @@ export function ProfilePage() {
     if (
       auth.user.username === user.username &&
       auth.user.email === user.email &&
-      auth.user.calorieLimit === user.calorieLimit &&
-      auth.user.image === user.image
+      auth.user.calorieLimit === user.calorieLimit
     ) {
       setIsEditing(false)
       return alert('you must change something in order to save')
