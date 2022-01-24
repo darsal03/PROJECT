@@ -1,20 +1,10 @@
-export const getMeals = (id, dateFrom, dateTo) => {
-  if (dateFrom && dateFrom !== null) {
-    // აქ უნდა ვაკეთებდე მსგავს რამეს, ? როგორც ხედავ მარტო კონკრეტული სიტუაციისთვის მაქვს ეს კოდი.
-    const { startYear, startMonth, startDay } = dateFrom
-    return fetch(
-      `${process.env.REACT_APP_API_BASE_URL}/meals/?userId=${id}&startYear=${startYear}&startMonth=${startMonth}&startDay=${startDay}`,
-      {
-        credentials: 'include',
-      }
-    )
-      .then((res) => res.json())
-      .then((data) => data.foundMeals)
-  }
-
-  return fetch(`${process.env.REACT_APP_API_BASE_URL}/meals/?userId=${id}`, {
-    credentials: 'include',
-  })
+export const getMeals = (id, query) => {
+  return fetch(
+    `${process.env.REACT_APP_API_BASE_URL}/meals/?userId=${id}&startYear=${query.dateFrom.year}&startMonth=${query.dateFrom.month}&startDay=${query.dateFrom.day}&endYear=${query.dateTo.year}&endMonth=${query.dateTo.month}&endDay=${query.dateTo.day}&startHour=${query.timeFrom.hour}&startMinutes=${query.timeFrom.minute}&endHour=${query.timeTo.hour}&endMinutes=${query.timeTo.minute}&asc=${query.asc}&desc=${query.desc}`,
+    {
+      credentials: 'include',
+    }
+  )
     .then((res) => res.json())
     .then((data) => data.foundMeals)
 }

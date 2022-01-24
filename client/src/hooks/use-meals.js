@@ -1,9 +1,9 @@
 import { useQuery } from 'react-query'
 import { getMeals } from '../api/meals'
 
-export function useMeals(id, dateFrom, dateTo) {
+export function useMeals(id, query) {
   return useQuery({
-    queryKey: 'meals',
-    queryFn: () => getMeals(id, dateFrom, dateTo),
+    queryKey: ['meals', query],
+    queryFn: () => getMeals(id, query),
   })
 }

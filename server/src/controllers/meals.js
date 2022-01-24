@@ -45,6 +45,8 @@ export const getMeals = async (req, res, next) => {
       endYear,
       endHour,
       endMinutes,
+      asc,
+      desc,
     } = req.query
 
     if (userId !== req.user.id && [ROLES.User, ROLES.Moderator].includes(req.user.role)) {
@@ -96,7 +98,9 @@ export const getMeals = async (req, res, next) => {
 
     console.log(query)
 
-    const foundMeals = await Meals.find(query)
+    const foundMeals = await Meals.find(query).sort(
+      (asc === 'true' && { createdAt: 'asc' }) || (desc === 'true' && { createdAt: 'desc' })
+    )
 
     if (foundMeals) {
       res.status(200).json({ foundMeals })

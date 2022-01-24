@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useAuth } from '../contexts/auth'
 import { useMeals } from '../hooks/use-meals'
@@ -12,11 +12,12 @@ import TextField from '@mui/material/TextField'
 import DateAdapter from '@mui/lab/AdapterDateFns'
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import DatePicker from '@mui/lab/DatePicker'
+import TimePicker from '@mui/lab/TimePicker'
 
 import { SpinIcon } from '../components/icons/Spinner'
 import { AscIcon } from '../components/icons/AscIcon'
 import { DescIcon } from '../components/icons/DescIcon'
-import { formatISO } from 'date-fns'
+import { getDay, getHours, getMinutes, getMonth, getYear, isValid } from 'date-fns'
 
 const MealsWrapper = styled('div', {
   display: 'flex',
@@ -49,7 +50,13 @@ const Header = styled('h1', {
 const FilterBar = styled('div', {
   display: 'flex',
   height: '7rem',
-  border: '0.1rem solid red',
+  borderBottom: '0.1rem solid #808080',
+  '@mobile': {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    height: 'fit-content',
+  },
 })
 
 const ActionButton = styled('button', {
@@ -57,79 +64,180 @@ const ActionButton = styled('button', {
   transition: '0.3s ease-in-out',
   fill: '#000000',
   '&:hover': {
-    fill: 'Green',
-  },
-  '@mobile': {
-    margin: '2rem 3rem',
+    fill: '#008000',
   },
 })
 
 const PickerWrapper = styled('div', {
-  margin: '1rem',
+  margin: '1rem 1.5rem',
+  '*': {
+    margin: '0.4rem',
+  },
+  '@mobile': {
+    margin: '0.5rem',
+  },
 })
 
 export function Meals() {
-  const [dateFrom, setDateFrom] = useState(null)
-  const [dateTo, setDateTo] = useState(null)
+  const [dateFrom, setDateFrom] = useState({
+    value: null,
+    year: '',
+    month: '',
+    day: '',
+  })
+  const [dateTo, setDateTo] = useState({
+    value: null,
+    year: '',
+    month: '',
+    day: '',
+  })
+  const [timeFrom, setTimeFrom] = useState({
+    value: null,
+    hour: '',
+    minute: '',
+  })
+  const [timeTo, setTimeTo] = useState({
+    value: null,
+    hour: '',
+    minute: '',
+  })
+  const [asc, setAsc] = useState(false)
+  const [desc, setDesc] = useState(false)
+
+  const query = { dateFrom, dateTo, timeFrom, timeTo, asc, desc }
 
   const { user } = useAuth()
-  const { data: meals, isFetching, isSuccess, refetch } = useMeals(user.id, dateFrom, dateTo)
+  const { data: meals, isFetching, isSuccess } = useMeals(user.id, query)
 
   const handleDateFrom = (newDate) => {
-    const date = formatISO(newDate, { representation: 'date' })
-    const startYear = date.split('-')[0]
-    const startMonth = date.split('-')[1]
-    const startDay = date.split('-')[2]
+    try {
+      const year = getYear(newDate)
+      const month = getMonth(newDate) + 1
+      const day = getDay(newDate)
 
-    setDateFrom({
-      startYear,
-      startMonth,
-      startDay,
-    })
-    refetch({ queryKey: 'meals' })
+      setAsc(false)
+      setDesc(false)
+      if (isValid(month) && isValid(year) && isValid(day)) {
+        setDateFrom({
+          value: newDate,
+          year,
+          month,
+          day,
+        })
+      }
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const handleDateTo = (newDate) => {
-    const date = formatISO(newDate, { representation: 'date' })
-    const endYear = date.split('-')[0]
-    const endMonth = date.split('-')[1]
-    const endDay = date.split('-')[2]
+    try {
+      const year = getYear(newDate)
+      const month = getMonth(newDate) + 1
+      const day = getDay(newDate)
 
-    setDateTo({
-      endYear,
-      endMonth,
-      endDay,
-    })
-    refetch({ queryKey: 'meals' })
+      setAsc(false)
+      setDesc(false)
+      if (isValid(month) && isValid(year) && isValid(day)) {
+        setDateTo({
+          value: newDate,
+          year,
+          month,
+          day,
+        })
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const handleTimeFrom = (newTime) => {
+    try {
+      const hour = getHours(newTime)
+      const minute = getMinutes(newTime)
+
+      setAsc(false)
+      setDesc(false)
+      if (isValid(hour) && isValid(minute)) {
+        setTimeFrom({
+          value: newTime,
+          hour,
+          minute,
+        })
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const handleTimeTo = (newTime) => {
+    try {
+      const hour = getHours(newTime)
+      const minute = getMinutes(newTime)
+
+      setAsc(false)
+      setDesc(false)
+      if (isValid(hour) && isValid(minute)) {
+        setTimeTo({
+          value: newTime,
+          hour,
+          minute,
+        })
+      }
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   return (
     <>
       <FilterBar>
-        <ActionButton>
-          <AscIcon />
-        </ActionButton>
-        <ActionButton>
-          <DescIcon />
-        </ActionButton>
+        <PickerWrapper>
+          <ActionButton
+            onClick={() => {
+              setDesc(false)
+              setAsc(true)
+            }}
+          >
+            <AscIcon />
+          </ActionButton>
+          <ActionButton
+            onClick={() => {
+              setAsc(false)
+              setDesc(true)
+            }}
+          >
+            <DescIcon />
+          </ActionButton>
+        </PickerWrapper>
         <LocalizationProvider dateAdapter={DateAdapter}>
           <PickerWrapper>
             <DatePicker
-              style={{ margin: '1rem' }}
               label="Date From"
-              value={dateFrom}
+              value={dateFrom.value}
               onChange={handleDateFrom}
-              renderInput={(params) => {
-                return <TextField {...params} />
-              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+            <DatePicker
+              label="Date To"
+              value={dateTo.value}
+              onChange={handleDateTo}
+              renderInput={(params) => <TextField {...params} />}
             />
           </PickerWrapper>
           <PickerWrapper>
-            <DatePicker
-              style={{ margin: '1rem' }}
-              label="Date To"
-              value={dateTo}
-              onChange={handleDateTo}
+            <TimePicker
+              label="Time From"
+              ampm={false}
+              value={timeFrom.value}
+              onChange={handleTimeFrom}
+              renderInput={(params) => <TextField {...params} />}
+            />
+            <TimePicker
+              label="Time To"
+              ampm={false}
+              value={timeTo.value}
+              onChange={handleTimeTo}
               renderInput={(params) => <TextField {...params} />}
             />
           </PickerWrapper>
