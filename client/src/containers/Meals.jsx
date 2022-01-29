@@ -17,7 +17,7 @@ import TimePicker from '@mui/lab/TimePicker'
 import { SpinIcon } from '../components/icons/Spinner'
 import { AscIcon } from '../components/icons/AscIcon'
 import { DescIcon } from '../components/icons/DescIcon'
-import { getDay, getHours, getMinutes, getMonth, getYear, isValid } from 'date-fns'
+import { getTime, isValid } from 'date-fns'
 
 const MealsWrapper = styled('div', {
   display: 'flex',
@@ -81,48 +81,31 @@ const PickerWrapper = styled('div', {
 export function Meals() {
   const [dateFrom, setDateFrom] = useState({
     value: null,
-    year: '',
-    month: '',
-    day: '',
+    date: '',
   })
   const [dateTo, setDateTo] = useState({
     value: null,
-    year: '',
-    month: '',
-    day: '',
+    date: '',
   })
-  const [timeFrom, setTimeFrom] = useState({
-    value: null,
-    hour: '',
-    minute: '',
-  })
-  const [timeTo, setTimeTo] = useState({
-    value: null,
-    hour: '',
-    minute: '',
-  })
+
   const [asc, setAsc] = useState(false)
   const [desc, setDesc] = useState(false)
 
-  const query = { dateFrom, dateTo, timeFrom, timeTo, asc, desc }
+  const query = { dateFrom, dateTo, asc, desc }
 
   const { user } = useAuth()
   const { data: meals, isFetching, isSuccess } = useMeals(user.id, query)
 
   const handleDateFrom = (newDate) => {
     try {
-      const year = getYear(newDate)
-      const month = getMonth(newDate) + 1
-      const day = getDay(newDate)
+      const date = Math.floor(getTime(newDate) / 1000)
 
       setAsc(false)
       setDesc(false)
-      if (isValid(month) && isValid(year) && isValid(day)) {
+      if (isValid(date)) {
         setDateFrom({
           value: newDate,
-          year,
-          month,
-          day,
+          date,
         })
       }
     } catch (err) {
@@ -132,56 +115,14 @@ export function Meals() {
 
   const handleDateTo = (newDate) => {
     try {
-      const year = getYear(newDate)
-      const month = getMonth(newDate) + 1
-      const day = getDay(newDate)
+      const date = Math.floor(getTime(newDate) / 1000)
 
       setAsc(false)
       setDesc(false)
-      if (isValid(month) && isValid(year) && isValid(day)) {
+      if (isValid(date)) {
         setDateTo({
           value: newDate,
-          year,
-          month,
-          day,
-        })
-      }
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  const handleTimeFrom = (newTime) => {
-    try {
-      const hour = getHours(newTime)
-      const minute = getMinutes(newTime)
-
-      setAsc(false)
-      setDesc(false)
-      if (isValid(hour) && isValid(minute)) {
-        setTimeFrom({
-          value: newTime,
-          hour,
-          minute,
-        })
-      }
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  const handleTimeTo = (newTime) => {
-    try {
-      const hour = getHours(newTime)
-      const minute = getMinutes(newTime)
-
-      setAsc(false)
-      setDesc(false)
-      if (isValid(hour) && isValid(minute)) {
-        setTimeTo({
-          value: newTime,
-          hour,
-          minute,
+          date,
         })
       }
     } catch (err) {
@@ -225,22 +166,6 @@ export function Meals() {
               renderInput={(params) => <TextField {...params} />}
             />
           </PickerWrapper>
-          <PickerWrapper>
-            <TimePicker
-              label="Time From"
-              ampm={false}
-              value={timeFrom.value}
-              onChange={handleTimeFrom}
-              renderInput={(params) => <TextField {...params} />}
-            />
-            <TimePicker
-              label="Time To"
-              ampm={false}
-              value={timeTo.value}
-              onChange={handleTimeTo}
-              renderInput={(params) => <TextField {...params} />}
-            />
-          </PickerWrapper>
         </LocalizationProvider>
       </FilterBar>
       <Header>{`Hi ${user.username}, here are your meals`}</Header>
@@ -251,8 +176,8 @@ export function Meals() {
       )}
       {isSuccess && (
         <MealsWrapper>
-          {meals.map(({ id, name, calories, parsedDate, parsedTime }) => (
-            <Meal key={id} meal={{ parsedDate, calories, name, parsedTime }} />
+          {meals.map(({ id, name, calories, date }) => (
+            <Meal key={id} meal={{ date, calories, name }} />
           ))}
         </MealsWrapper>
       )}

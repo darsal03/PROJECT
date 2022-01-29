@@ -4,6 +4,8 @@ import { DoneIcon } from './icons/Checkmark'
 import { DeleteIcon } from './icons/Delete'
 import { FoodIcon } from './icons/FoodIcon'
 
+import { getDate, getHours, getMinutes, getMonth, getYear } from 'date-fns'
+
 const MealWrapper = styled('div', {
   width: '35rem',
   height: '35rem',
@@ -69,15 +71,21 @@ const CalorieText = styled('span', {
 
 export function Meal({ meal }) {
   const [calorieExceeds, setCalorieExceeds] = useState(false)
-  const { parsedDate, calories, name, parsedTime } = meal
-  const { day, month, year } = parsedDate
-  const { hour, minute } = parsedTime
+
+  const date = new Date(meal.date * 1000)
+  const year = getYear(date)
+  const month = getMonth(date) + 1
+  const day = getDate(date)
+  const hour = getHours(date)
+  const minute = getMinutes(date)
+
   return (
     <MealWrapper>
       <MealTitle>
-        <FoodIcon /> {name}
+        <FoodIcon />
+        {meal.name}
       </MealTitle>
-      <MealDetail>--{`Calories = ${calories}`}</MealDetail>
+      <MealDetail>--{`Calories = ${meal.calories}`}</MealDetail>
       <MealDetail>--{`Eaten on : ${day}/${month}/${year}`}</MealDetail>
       <MealDetail>--{`Eaten at : ${hour}:${minute}`}</MealDetail>
       <MealDetail>

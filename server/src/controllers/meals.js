@@ -12,15 +12,6 @@ export const postMeal = async (req, res, next) => {
       userId,
       name,
       calories,
-      parsedDate: {
-        day: date.getDate(),
-        month: date.getMonth() + 1,
-        year: date.getFullYear(),
-      },
-      parsedTime: {
-        hour: date.getHours(),
-        minute: date.getMinutes(),
-      },
       date: ISOdate,
     })
     if (newMeal) {
@@ -33,21 +24,7 @@ export const postMeal = async (req, res, next) => {
 
 export const getMeals = async (req, res, next) => {
   try {
-    const {
-      userId,
-      startDay,
-      startMonth,
-      startYear,
-      startHour,
-      startMinutes,
-      endDay,
-      endMonth,
-      endYear,
-      endHour,
-      endMinutes,
-      asc,
-      desc,
-    } = req.query
+    const { userId, dateFrom, dateTo, asc, desc } = req.query
 
     if (userId !== req.user.id && [ROLES.User, ROLES.Moderator].includes(req.user.role)) {
       return res.status(403).json({})
@@ -55,45 +32,14 @@ export const getMeals = async (req, res, next) => {
 
     let query = { userId }
 
-    if (startYear) query = { ...query, 'parsedDate.year': { $gte: startYear } }
-    if (endYear) {
-      query = {
-        ...query,
-        'parsedDate.year': startYear ? { $gte: startYear, $lte: endYear } : { $lte: endYear },
-      }
+    if (dateFrom) {
+      query = { ...query, date: { $gte: Number(dateFrom) } }
     }
-
-    if (startDay) query = { ...query, 'parsedDate.day': { $gte: startDay } }
-    if (endDay) {
-      query = {
-        ...query,
-        'parsedDate.day': startDay ? { $gte: startDay, $lte: endDay } : { $lte: endDay },
-      }
+    if (dateTo) {
+      query = { ...query, date: { $lte: Number(dateTo) } }
     }
-
-    if (startMonth) query = { ...query, 'parsedDate.month': { $gte: startMonth } }
-    if (endMonth) {
-      query = {
-        ...query,
-        'parsedDate.month': startMonth ? { $gte: startMonth, $lte: endMonth } : { $lte: endMonth },
-      }
-    }
-
-    if (startHour) query = { ...query, 'parsedTime.hour': { $gte: startHour } }
-    if (endHour) {
-      query = {
-        ...query,
-        'parsedTime.hour': startHour ? { $gte: startHour, $lte: endHour } : { $lte: endHour },
-      }
-    }
-    if (startMinutes) query = { ...query, 'parsedTime.minute': { $gte: startMinutes } }
-    if (endMinutes) {
-      query = {
-        ...query,
-        'parsedTime.minute': startMinutes
-          ? { $gte: startMinutes, $lte: endMinutes }
-          : { $lte: endMinutes },
-      }
+    if (dateFrom && dateTo) {
+      query = { ...query, date: { $gte: Number(dateFrom), $lte: Number(dateTo) } }
     }
 
     console.log(query)
