@@ -33,19 +33,17 @@ export const getMeals = async (req, res, next) => {
     let query = { userId }
 
     if (dateFrom) {
-      query = { ...query, date: { $gte: Number(dateFrom) } }
+      query = { ...query, date: { $gte: dateFrom } }
     }
     if (dateTo) {
-      query = { ...query, date: { $lte: Number(dateTo) } }
+      query = { ...query, date: { $lte: dateTo } }
     }
     if (dateFrom && dateTo) {
-      query = { ...query, date: { $gte: Number(dateFrom), $lte: Number(dateTo) } }
+      query = { ...query, date: { $gte: dateFrom, $lte: dateTo } }
     }
 
-    console.log(query)
-
     const foundMeals = await Meals.find(query).sort(
-      (asc === 'true' && { createdAt: 'asc' }) || (desc === 'true' && { createdAt: 'desc' })
+      (asc === 'true' && { date: 'asc' }) || (desc === 'true' && { date: 'desc' })
     )
 
     if (foundMeals) {
