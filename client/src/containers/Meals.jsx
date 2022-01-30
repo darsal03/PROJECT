@@ -12,12 +12,11 @@ import TextField from '@mui/material/TextField'
 import DateAdapter from '@mui/lab/AdapterDateFns'
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
 import DatePicker from '@mui/lab/DatePicker'
-import TimePicker from '@mui/lab/TimePicker'
 
 import { SpinIcon } from '../components/icons/Spinner'
 import { AscIcon } from '../components/icons/AscIcon'
 import { DescIcon } from '../components/icons/DescIcon'
-import { getTime, isValid } from 'date-fns'
+import { isValid } from 'date-fns'
 
 const MealsWrapper = styled('div', {
   display: 'flex',
@@ -60,7 +59,7 @@ const FilterBar = styled('div', {
 })
 
 const ActionButton = styled('button', {
-  margin: '1.5rem 1.1rem',
+  margin: '1rem 0.8rem',
   transition: '0.3s ease-in-out',
   fill: '#000000',
   '&:hover': {
@@ -78,16 +77,20 @@ const PickerWrapper = styled('div', {
   },
 })
 
-export function Meals() {
-  const [dateFrom, setDateFrom] = useState({
-    value: null,
-    date: '',
-  })
-  const [dateTo, setDateTo] = useState({
-    value: null,
-    date: '',
-  })
+const ClearFiltersButton = styled('button', {
+  margin: '2rem 0.8rem',
+  padding: '0.5rem',
+  transition: '0.2s ease-in-out',
+  borderRadius: '1rem',
+  '&:hover': {
+    color: '#fff',
+    backgroundColor: '#008000',
+  },
+})
 
+export function Meals() {
+  const [dateFrom, setDateFrom] = useState(null)
+  const [dateTo, setDateTo] = useState(null)
   const [asc, setAsc] = useState(false)
   const [desc, setDesc] = useState(false)
 
@@ -98,15 +101,10 @@ export function Meals() {
 
   const handleDateFrom = (newDate) => {
     try {
-      const date = Math.floor(getTime(newDate) / 1000)
-
       setAsc(false)
       setDesc(false)
-      if (isValid(date)) {
-        setDateFrom({
-          value: newDate,
-          date,
-        })
+      if (isValid(newDate)) {
+        setDateFrom(newDate)
       }
     } catch (err) {
       console.log(err)
@@ -115,19 +113,21 @@ export function Meals() {
 
   const handleDateTo = (newDate) => {
     try {
-      const date = Math.floor(getTime(newDate) / 1000)
-
       setAsc(false)
       setDesc(false)
-      if (isValid(date)) {
-        setDateTo({
-          value: newDate,
-          date,
-        })
+      if (isValid(newDate)) {
+        setDateTo(newDate)
       }
     } catch (err) {
       console.log(err)
     }
+  }
+
+  const handleClearFilter = () => {
+    setAsc(false)
+    setDesc(false)
+    setDateFrom(null)
+    setDateTo(null)
   }
 
   return (
@@ -155,18 +155,19 @@ export function Meals() {
           <PickerWrapper>
             <DatePicker
               label="Date From"
-              value={dateFrom.value}
+              value={dateFrom}
               onChange={handleDateFrom}
               renderInput={(params) => <TextField {...params} />}
             />
             <DatePicker
               label="Date To"
-              value={dateTo.value}
+              value={dateTo}
               onChange={handleDateTo}
               renderInput={(params) => <TextField {...params} />}
             />
           </PickerWrapper>
         </LocalizationProvider>
+        <ClearFiltersButton onClick={handleClearFilter}>Clear Filters</ClearFiltersButton>
       </FilterBar>
       <Header>{`Hi ${user.username}, here are your meals`}</Header>
       {isFetching && (
