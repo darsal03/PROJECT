@@ -8,13 +8,13 @@ import { getDate, getHours, getMinutes, getMonth, getYear } from 'date-fns'
 
 const MealWrapper = styled('div', {
   width: '35rem',
-  height: '35rem',
+  height: 'fit-content',
   margin: '2rem',
   borderRadius: '0.5rem',
   boxShadow: ' 0 0.5rem 1.1rem rgba(0.35, 0.35, 0.35, 0.35)',
   '@mobile': {
     width: '45rem',
-    height: '45rem',
+    height: 'fit-content',
   },
 })
 
@@ -47,7 +47,7 @@ const ActionButton = styled('button', {
   transition: '0.3s ease-in-out',
   fill: '#000000',
   '&:hover': {
-    fill: 'Green',
+    fill: '#008000',
   },
   '@mobile': {
     margin: '2rem 3rem',
@@ -72,7 +72,7 @@ const CalorieText = styled('span', {
 export function Meal({ meal }) {
   const [calorieExceeds, setCalorieExceeds] = useState(false)
 
-  const date = new Date(meal.date * 1000)
+  const date = new Date(meal.date)
   const year = getYear(date)
   const month = getMonth(date) + 1
   const day = getDate(date)
@@ -86,7 +86,7 @@ export function Meal({ meal }) {
         {meal.name}
       </MealTitle>
       <MealDetail>--{`Calories = ${meal.calories}`}</MealDetail>
-      <MealDetail>--{`Eaten on : ${day}/${month}/${year}`}</MealDetail>
+      <MealDetail>--{`Eaten on : ${month}/${day}/${year}`}</MealDetail>
       <MealDetail>--{`Eaten at : ${hour}:${minute}`}</MealDetail>
       <MealDetail>
         <CalorieText calories={!calorieExceeds ? 'under' : 'over'}>
