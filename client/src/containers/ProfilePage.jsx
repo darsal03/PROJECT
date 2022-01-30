@@ -26,8 +26,8 @@ const Picture = styled('div', {
 })
 
 const Img = styled('img', {
-  width: '10rem',
-  height: '10rem',
+  width: '30rem',
+  height: '30rem',
   borderRadius: '50%',
   objectFit: 'cover',
   objectPosition: 'center',
