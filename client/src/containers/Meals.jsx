@@ -17,6 +17,7 @@ import { SpinIcon } from '../components/icons/Spinner'
 import { AscIcon } from '../components/icons/AscIcon'
 import { DescIcon } from '../components/icons/DescIcon'
 import { isValid } from 'date-fns'
+import getTime from 'date-fns/getTime'
 
 const MealsWrapper = styled('div', {
   display: 'flex',
@@ -84,7 +85,7 @@ const ClearFiltersButton = styled('button', {
   borderRadius: '1rem',
   '&:hover': {
     color: '#fff',
-    backgroundColor: '#008000',
+    bg: '#008000',
   },
 })
 
@@ -104,7 +105,8 @@ export function Meals() {
       setAsc(false)
       setDesc(false)
       if (isValid(newDate)) {
-        setDateFrom(newDate)
+        const date = getTime(newDate)
+        setDateFrom(date)
       }
     } catch (err) {
       console.log(err)
@@ -116,7 +118,8 @@ export function Meals() {
       setAsc(false)
       setDesc(false)
       if (isValid(newDate)) {
-        setDateTo(newDate)
+        const date = getTime(newDate)
+        setDateTo(date)
       }
     } catch (err) {
       console.log(err)
