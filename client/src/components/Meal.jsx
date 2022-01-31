@@ -1,18 +1,20 @@
 import { useState } from 'react'
 import { styled } from '../stitches.config'
-import { DoneIcon } from './icons/checkmark'
-import { DeleteIcon } from './icons/delete'
-import { FoodIcon } from './icons/foodIcon'
+import { DoneIcon } from './icons/Checkmark'
+import { DeleteIcon } from './icons/Delete'
+import { FoodIcon } from './icons/FoodIcon'
+
+import { getDate, getHours, getMinutes, getMonth, getYear } from 'date-fns'
 
 const MealWrapper = styled('div', {
   width: '35rem',
-  height: '35rem',
+  height: 'fit-content',
   margin: '2rem',
   borderRadius: '0.5rem',
   boxShadow: ' 0 0.5rem 1.1rem rgba(0.35, 0.35, 0.35, 0.35)',
   '@mobile': {
     width: '45rem',
-    height: '45rem',
+    height: 'fit-content',
   },
 })
 
@@ -45,7 +47,7 @@ const ActionButton = styled('button', {
   transition: '0.3s ease-in-out',
   fill: '#000000',
   '&:hover': {
-    fill: 'Green',
+    fill: '#008000',
   },
   '@mobile': {
     margin: '2rem 3rem',
@@ -69,16 +71,22 @@ const CalorieText = styled('span', {
 
 export function Meal({ meal }) {
   const [calorieExceeds, setCalorieExceeds] = useState(false)
-  const { parsedDate, calories, name, parsedTime } = meal
-  const { day, month, year } = parsedDate
-  const { hour, minute } = parsedTime
+
+  const date = new Date(meal.date)
+  const year = getYear(date)
+  const month = getMonth(date) + 1
+  const day = getDate(date)
+  const hour = getHours(date)
+  const minute = getMinutes(date)
+
   return (
     <MealWrapper>
       <MealTitle>
-        <FoodIcon /> {name}
+        <FoodIcon />
+        {meal.name}
       </MealTitle>
-      <MealDetail>--{`Calories = ${calories}`}</MealDetail>
-      <MealDetail>--{`Eaten on : ${day}/${month}/${year}`}</MealDetail>
+      <MealDetail>--{`Calories = ${meal.calories}`}</MealDetail>
+      <MealDetail>--{`Eaten on : ${month}/${day}/${year}`}</MealDetail>
       <MealDetail>--{`Eaten at : ${hour}:${minute}`}</MealDetail>
       <MealDetail>
         <CalorieText calories={!calorieExceeds ? 'under' : 'over'}>

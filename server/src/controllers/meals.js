@@ -12,15 +12,6 @@ export const postMeal = async (req, res, next) => {
       userId,
       name,
       calories,
-      parsedDate: {
-        day: date.getDate(),
-        month: date.getMonth() + 1,
-        year: date.getFullYear(),
-      },
-      parsedTime: {
-        hour: date.getHours(),
-        minute: date.getMinutes(),
-      },
       date: ISOdate,
     })
     if (newMeal) {
@@ -33,32 +24,27 @@ export const postMeal = async (req, res, next) => {
 
 export const getMeals = async (req, res, next) => {
   try {
-    const {
-      userId,
-      startDay,
-      startMonth,
-      startHour,
-      startMinutes,
-      startYear,
-      endDay,
-      endMonth,
-      endYear,
-      endHour,
-      endMinutes,
-    } = req.query
+    const { userId, dateFrom, dateTo, asc, desc } = req.query
 
     if (userId !== req.user.id && [ROLES.User, ROLES.Moderator].includes(req.user.role)) {
       return res.status(403).json({})
     }
 
-    const foundMeals = await Meals.find({
-      userId,
-      // 'parsedDate.day': { $gte: startDay, $lte: endDay },
-      // 'parsedDate.month': { $gte: startMonth, $lte: endMonth },
-      // 'parsedDate.year': { $gte: startYear, $lte: endYear },
-      // 'parsedTime.hour': { $gte: startHour, $lte: endHour },
-      // 'parsedTime.minute': { $gte: startMinutes, $lte: endMinutes },
-    })
+    let query = { userId }
+
+    if (dateFrom) {
+      query = { ...query, date: { $gte: dateFrom } }
+    }
+    if (dateTo) {
+      query = { ...query, date: { $lte: dateTo } }
+    }
+    if (dateFrom && dateTo) {
+      query = { ...query, date: { $gte: dateFrom, $lte: dateTo } }
+    }
+
+    const foundMeals = await Meals.find(query).sort(
+      (asc === 'true' && { date: 'asc' }) || (desc === 'true' && { date: 'desc' })
+    )
 
     if (foundMeals) {
       res.status(200).json({ foundMeals })
@@ -67,6 +53,24 @@ export const getMeals = async (req, res, next) => {
     }
   } catch (error) {
     next(error)
+  }
+}
+
+export const getMealById = async (req, res, next) => {
+  try {
+    const id = req.params.id
+    const foundMeal = await Meals.findById(id)
+
+    if (
+      foundMeal.userId.toString() !== req.user.id &&
+      [ROLES.User, ROLES.Moderator].includes(req.user.role)
+    ) {
+      return res.status(403).json({})
+    } else {
+      res.status(200).json({ foundMeal })
+    }
+  } catch (error) {
+    next(error.message)
   }
 }
 
@@ -83,24 +87,6 @@ export const deleteMeal = async (req, res, next) => {
     } else {
       await Meals.deleteOne({ id })
       res.status(200).json({})
-    }
-  } catch (error) {
-    next(error.message)
-  }
-}
-
-export const getMealById = async (req, res, next) => {
-  try {
-    const id = req.params.id
-    const foundMeal = await Meals.findById(id)
-
-    if (
-      foundMeal.userId.toString() !== req.user.id &&
-      [ROLES.User, ROLES.Moderator].includes(req.user.role)
-    ) {
-      return res.status(403).json({})
-    } else {
-      res.status(200).json({ foundMeal })
     }
   } catch (error) {
     next(error.message)

@@ -1,11 +1,9 @@
 import { useQuery } from 'react-query'
-import { useAuth } from '../contexts/auth'
 import { getMeals } from '../api/meals'
 
-export function useMeals() {
-  const { user } = useAuth()
+export function useMeals(id, query) {
   return useQuery({
-    queryKey: 'meals',
-    queryFn: () => getMeals(user.id),
+    queryKey: ['meals', query],
+    queryFn: () => getMeals(id, query),
   })
 }

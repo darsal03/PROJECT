@@ -19,17 +19,8 @@ const mealSchema = new Schema(
       max: [5000, 'should not exceed 5000 calories'],
       required: [true, 'calorie count is required'],
     },
-    parsedDate: {
-      day: Number,
-      month: Number,
-      year: Number,
-    },
-    parsedTime: {
-      hour: Number,
-      minute: Number,
-    },
     date: {
-      type: String,
+      type: Number,
       required: true,
     },
   },

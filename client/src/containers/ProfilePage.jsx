@@ -26,8 +26,8 @@ const Picture = styled('div', {
 })
 
 const Img = styled('img', {
-  width: '10rem',
-  height: '10rem',
+  width: '30rem',
+  height: '30rem',
   borderRadius: '50%',
   objectFit: 'cover',
   objectPosition: 'center',
@@ -147,8 +147,7 @@ export function ProfilePage() {
     if (
       auth.user.username === user.username &&
       auth.user.email === user.email &&
-      auth.user.calorieLimit === user.calorieLimit &&
-      auth.user.image === user.image
+      auth.user.calorieLimit === user.calorieLimit
     ) {
       setIsEditing(false)
       return alert('you must change something in order to save')
