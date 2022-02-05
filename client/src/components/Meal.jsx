@@ -1,19 +1,27 @@
 import { useState } from 'react'
 import { styled } from '../stitches.config'
-import { DoneIcon } from './icons/Checkmark'
+import { EditButton } from './icons/Edit'
 import { DeleteIcon } from './icons/Delete'
 import { FoodIcon } from './icons/FoodIcon'
 
+import TextField from '@mui/material/TextField'
+import LocalizationProvider from '@mui/lab/LocalizationProvider'
+import DateAdapter from '@mui/lab/AdapterDateFns'
+import { DateTimePicker } from '@mui/lab'
+import isValid from 'date-fns/isValid'
 import { getDate, getHours, getMinutes, getMonth, getYear } from 'date-fns'
 
+import { useUpdateMeal } from '../hooks/use-update-meal'
+import { useDeleteMeal } from '../hooks/use-delete-meal'
+
 const MealWrapper = styled('div', {
-  width: '35rem',
-  height: 'fit-content',
-  margin: '2rem',
+  width: '30rem',
+  height: '35rem',
+  margin: '2rem 3rem ',
   borderRadius: '0.5rem',
   boxShadow: ' 0 0.5rem 1.1rem rgba(0.35, 0.35, 0.35, 0.35)',
   '@mobile': {
-    width: '45rem',
+    width: '35rem',
     height: 'fit-content',
   },
 })
@@ -69,9 +77,59 @@ const CalorieText = styled('span', {
   },
 })
 
-export function Meal({ meal }) {
-  const [calorieExceeds, setCalorieExceeds] = useState(false)
+const FormWrapper = styled('div', {
+  margin: '2rem 3rem',
+  width: '30rem',
+  height: '35rem',
+  borderRadius: '0.5rem',
+  boxShadow: ' 0 0.5rem 1.1rem rgba(0.35, 0.35, 0.35, 0.35)',
+  '@mobile': {
+    width: '35rem',
+    height: '35rem',
+  },
+})
 
+const Form = styled('form', {
+  display: 'flex',
+  flexDirection: 'column',
+  margin: 'auto',
+  width: '30rem',
+  padding: '2rem',
+})
+
+const Label = styled('label', {
+  margin: '0.5rem 0 0.3rem 0',
+  fontSize: '$body',
+})
+
+const Input = styled('input', {
+  margin: '1rem 0 0 0',
+  padding: '1.5rem',
+  height: '1rem',
+  fontSize: '$body',
+  border: '0.1rem solid #808080',
+  borderRadius: '1rem',
+})
+
+const FormButton = styled('button', {
+  margin: '2rem 0.7rem 0',
+  padding: '1rem 2rem',
+  fontSize: '$body',
+  borderRadius: '1rem',
+  border: '0.1rem solid #008000',
+  transition: 'ease-in-out 0.3s',
+  color: '#008000',
+  '&:hover': {
+    color: '#fff',
+    bg: '#008000',
+    boxShadow: ' 0 0.5rem 1.5rem rgba(0, 0, 0, 0.35)',
+  },
+  '@mobile': {
+    padding: '1rem 2rem',
+  },
+})
+
+function MealDetails({ meal, calorieExceeds, onDeleteMeal, onEditOpen }) {
   const date = new Date(meal.date)
   const year = getYear(date)
   const month = getMonth(date) + 1
@@ -94,13 +152,104 @@ export function Meal({ meal }) {
         </CalorieText>
       </MealDetail>
       <ButtonWrapper>
-        <ActionButton>
-          <DoneIcon />{' '}
+        <ActionButton onClick={onEditOpen}>
+          <EditButton />{' '}
         </ActionButton>
-        <ActionButton>
+        <ActionButton onClick={() => onDeleteMeal(meal.id)}>
           <DeleteIcon />{' '}
         </ActionButton>
       </ButtonWrapper>
     </MealWrapper>
+  )
+}
+
+function EditMeal({ meal, onEditClose, onInputChange, onUpdateMeal, onDateChange }) {
+  return (
+    <FormWrapper>
+      <Form onSubmit={(event) => onUpdateMeal(event, meal)}>
+        <Label htmlFor="name">Name:</Label>
+        <Input name="name" value={meal.name} onChange={onInputChange} />
+        <LocalizationProvider dateAdapter={DateAdapter}>
+          <Label htmlFor="date">Date:</Label>
+          <DateTimePicker
+            clearable
+            ampm
+            name="date"
+            value={meal.date}
+            onChange={onDateChange}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+        <Label htmlFor="calories">Calories:</Label>
+        <Input type="number" name="calories" value={meal.calories} onChange={onInputChange} />
+        <ButtonWrapper>
+          <FormButton onClick={onEditClose}>Cancel Edit</FormButton>
+          <FormButton>Update</FormButton>
+        </ButtonWrapper>
+      </Form>
+    </FormWrapper>
+  )
+}
+
+export function Meal({ meal: mealDetails }) {
+  const [calorieExceeds, setCalorieExceeds] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [meal, setMeal] = useState({
+    id: mealDetails.id,
+    name: mealDetails.name,
+    date: mealDetails.date,
+    calories: mealDetails.calories,
+  })
+  const { mutate: updateMeal } = useUpdateMeal()
+  const { mutate: deleteMeal } = useDeleteMeal()
+
+  const handleEditOpen = () => setIsEditing(true)
+
+  const handleEditClose = () => {
+    setIsEditing(false)
+    setMeal({ ...mealDetails })
+  }
+
+  const handleInputChange = (event) => {
+    setMeal({ ...meal, [event.target.name]: event.target.value })
+  }
+
+  const handleDateChange = (newDate) => {
+    setMeal({ ...meal, date: newDate })
+  }
+
+  const handleMealUpdate = (event, meal) => {
+    event.preventDefault()
+    if (isValid(meal.date)) {
+      updateMeal(meal)
+      setIsEditing(false)
+    } else {
+      return alert('you entered invalid date')
+    }
+  }
+
+  const handleMealDelete = (id) => {
+    deleteMeal(id)
+  }
+
+  return (
+    <>
+      {isEditing ? (
+        <EditMeal
+          onEditClose={handleEditClose}
+          meal={meal}
+          onInputChange={handleInputChange}
+          onDateChange={handleDateChange}
+          onUpdateMeal={handleMealUpdate}
+        />
+      ) : (
+        <MealDetails
+          meal={meal}
+          calorieExceeds
+          onDeleteMeal={handleMealDelete}
+          onEditOpen={handleEditOpen}
+        />
+      )}
+    </>
   )
 }

@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { useAuth } from '../contexts/auth'
 import { useMeals } from '../hooks/use-meals'
-
 import { Meal } from '../components/Meal'
 
 import { styled } from '../stitches.config'
@@ -18,13 +17,15 @@ import { AscIcon } from '../components/icons/AscIcon'
 import { DescIcon } from '../components/icons/DescIcon'
 import { isValid } from 'date-fns'
 import getTime from 'date-fns/getTime'
+import { AddMeal } from '../components/AddMeal'
 
 const MealsWrapper = styled('div', {
   display: 'flex',
+  flexWrap: 'wrap',
+  justifyContent: 'start',
   '@mobile': {
+    alignContent: 'center',
     flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 })
 
@@ -180,8 +181,9 @@ export function Meals() {
       )}
       {isSuccess && (
         <MealsWrapper>
+          <AddMeal />
           {meals.map(({ id, name, calories, date }) => (
-            <Meal key={id} meal={{ date, calories, name }} />
+            <Meal key={id} meal={{ id, date, calories, name }} />
           ))}
         </MealsWrapper>
       )}
