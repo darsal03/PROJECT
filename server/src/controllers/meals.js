@@ -80,12 +80,12 @@ export const deleteMeal = async (req, res, next) => {
     const foundMeal = await Meals.findById(id)
 
     if (
-      foundMeal.userId.toString() !== req.user.toString() &&
+      foundMeal.userId.toString() !== req.user.id.toString() &&
       [ROLES.User, ROLES.Moderator].includes(req.user.role)
     ) {
       return res.status(403).json({})
     } else {
-      await Meals.deleteOne({ id })
+      await Meals.findByIdAndDelete(id)
       res.status(200).json({})
     }
   } catch (error) {
