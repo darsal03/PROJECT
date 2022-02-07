@@ -1,15 +1,14 @@
 import { useState } from 'react'
+
+import isValid from 'date-fns/isValid'
+import { getDate, getHours, getMinutes, getMonth, getYear } from 'date-fns'
+import TextField from '@mui/material/TextField'
+import { DateTimePicker } from '@mui/lab'
+
 import { styled } from '../stitches.config'
 import { EditButton } from './icons/Edit'
 import { DeleteIcon } from './icons/Delete'
 import { FoodIcon } from './icons/FoodIcon'
-
-import TextField from '@mui/material/TextField'
-import LocalizationProvider from '@mui/lab/LocalizationProvider'
-import DateAdapter from '@mui/lab/AdapterDateFns'
-import { DateTimePicker } from '@mui/lab'
-import isValid from 'date-fns/isValid'
-import { getDate, getHours, getMinutes, getMonth, getYear } from 'date-fns'
 
 import { useUpdateMeal } from '../hooks/use-update-meal'
 import { useDeleteMeal } from '../hooks/use-delete-meal'
@@ -137,6 +136,10 @@ function MealDetails({ meal, calorieExceeds, onDeleteMeal, onEditOpen }) {
   const hour = getHours(date)
   const minute = getMinutes(date)
 
+  const handleDeleteMeal = (event, id = meal.id) => {
+    onDeleteMeal(id)
+  }
+
   return (
     <MealWrapper>
       <MealTitle>
@@ -155,7 +158,7 @@ function MealDetails({ meal, calorieExceeds, onDeleteMeal, onEditOpen }) {
         <ActionButton onClick={onEditOpen}>
           <EditButton />{' '}
         </ActionButton>
-        <ActionButton onClick={() => onDeleteMeal(meal.id)}>
+        <ActionButton onClick={handleDeleteMeal}>
           <DeleteIcon />{' '}
         </ActionButton>
       </ButtonWrapper>
@@ -169,17 +172,15 @@ function EditMeal({ meal, onEditClose, onInputChange, onUpdateMeal, onDateChange
       <Form onSubmit={(event) => onUpdateMeal(event, meal)}>
         <Label htmlFor="name">Name:</Label>
         <Input name="name" value={meal.name} onChange={onInputChange} />
-        <LocalizationProvider dateAdapter={DateAdapter}>
-          <Label htmlFor="date">Date:</Label>
-          <DateTimePicker
-            clearable
-            ampm
-            name="date"
-            value={meal.date}
-            onChange={onDateChange}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </LocalizationProvider>
+        <Label htmlFor="date">Date:</Label>
+        <DateTimePicker
+          clearable
+          ampm
+          name="date"
+          value={meal.date}
+          onChange={onDateChange}
+          renderInput={(params) => <TextField {...params} />}
+        />
         <Label htmlFor="calories">Calories:</Label>
         <Input type="number" name="calories" value={meal.calories} onChange={onInputChange} />
         <ButtonWrapper>
