@@ -1,15 +1,12 @@
 import { useState } from 'react'
 
-import { styled } from '../stitches.config'
-import { Plus } from './icons/Plus'
-
 import TextField from '@mui/material/TextField'
-import LocalizationProvider from '@mui/lab/LocalizationProvider'
-import DateAdapter from '@mui/lab/AdapterDateFns'
 import { DateTimePicker } from '@mui/lab'
 import isValid from 'date-fns/isValid'
 import getTime from 'date-fns/getTime'
 
+import { styled } from '../stitches.config'
+import { Plus } from './icons/Plus'
 import { useAddMeal } from '../hooks/use-add-meal'
 
 const AddMealWrapper = styled('div', {
@@ -21,7 +18,7 @@ const AddMealWrapper = styled('div', {
   cursor: 'pointer',
   transition: '0.3s ease-in-out',
   '&:hover': {
-    boxShadow: ' 0 0.5rem 1.1rem rgba(0.35, 0.35, 0.35, 0.35)',
+    boxShadow: '0 0.5rem 1.1rem rgba(0.35, 0.35, 0.35, 0.35)',
   },
   '@mobile': {
     width: '35rem',
@@ -115,17 +112,15 @@ function AddMealForm({ onAddMealClose, onInputChage, onDateChange, onSubmit, mea
       <Form onSubmit={onSubmit}>
         <Label htmlFor="name">Name:</Label>
         <Input name="name" value={meal.name} onChange={onInputChage} />
-        <LocalizationProvider dateAdapter={DateAdapter}>
-          <Label htmlFor="date">Date:</Label>
-          <DateTimePicker
-            clearable
-            ampm
-            name="date"
-            value={meal.date}
-            onChange={onDateChange}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </LocalizationProvider>
+        <Label htmlFor="date">Date:</Label>
+        <DateTimePicker
+          clearable
+          ampm
+          name="date"
+          value={meal.date}
+          onChange={onDateChange}
+          renderInput={(params) => <TextField {...params} />}
+        />
         <Label htmlFor="calories">Calories:</Label>
         <Input type="number" name="calories" value={meal.calories} onChange={onInputChage} />
         <ButtonWrapper>
