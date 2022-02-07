@@ -1,30 +1,29 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+
+import { isValid } from 'date-fns'
+import getTime from 'date-fns/getTime'
+import TextField from '@mui/material/TextField'
+import DatePicker from '@mui/lab/DatePicker'
 
 import { useAuth } from '../contexts/auth'
 import { useMeals } from '../hooks/use-meals'
-
 import { Meal } from '../components/Meal'
 
 import { styled } from '../stitches.config'
-import { keyframes } from '@stitches/react'
-
-import TextField from '@mui/material/TextField'
-import DateAdapter from '@mui/lab/AdapterDateFns'
-import LocalizationProvider from '@mui/lab/LocalizationProvider'
-import DatePicker from '@mui/lab/DatePicker'
+import { keyframes } from '../stitches.config'
 
 import { SpinIcon } from '../components/icons/Spinner'
 import { AscIcon } from '../components/icons/AscIcon'
 import { DescIcon } from '../components/icons/DescIcon'
-import { isValid } from 'date-fns'
-import getTime from 'date-fns/getTime'
+import { AddMeal } from '../components/AddMeal'
 
 const MealsWrapper = styled('div', {
   display: 'flex',
+  flexWrap: 'wrap',
+  justifyContent: 'start',
   '@mobile': {
+    alignContent: 'center',
     flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 })
 
@@ -154,22 +153,20 @@ export function Meals() {
             <DescIcon />
           </ActionButton>
         </PickerWrapper>
-        <LocalizationProvider dateAdapter={DateAdapter}>
-          <PickerWrapper>
-            <DatePicker
-              label="Date From"
-              value={dateFrom}
-              onChange={handleDateFrom}
-              renderInput={(params) => <TextField {...params} />}
-            />
-            <DatePicker
-              label="Date To"
-              value={dateTo}
-              onChange={handleDateTo}
-              renderInput={(params) => <TextField {...params} />}
-            />
-          </PickerWrapper>
-        </LocalizationProvider>
+        <PickerWrapper>
+          <DatePicker
+            label="Date From"
+            value={dateFrom}
+            onChange={handleDateFrom}
+            renderInput={(params) => <TextField {...params} />}
+          />
+          <DatePicker
+            label="Date To"
+            value={dateTo}
+            onChange={handleDateTo}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </PickerWrapper>
         <ClearFiltersButton onClick={handleClearFilter}>Clear Filters</ClearFiltersButton>
       </FilterBar>
       <Header>{`Hi ${user.username}, here are your meals`}</Header>
@@ -180,8 +177,9 @@ export function Meals() {
       )}
       {isSuccess && (
         <MealsWrapper>
+          <AddMeal />
           {meals.map(({ id, name, calories, date }) => (
-            <Meal key={id} meal={{ date, calories, name }} />
+            <Meal key={id} meal={{ id, date, calories, name }} />
           ))}
         </MealsWrapper>
       )}
