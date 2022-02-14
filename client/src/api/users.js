@@ -1,7 +1,9 @@
 const apiUrl = process.env.REACT_APP_API_BASE_URL
 
 export const getUsers = () => {
-  return fetch(`${apiUrl}/users`)
+  return fetch(`${apiUrl}/users`, { credentials: 'include' })
+    .then((res) => res.json())
+    .then((data) => data.foundUsers)
 }
 
 export const createUser = ({ username, email, password }) => {
@@ -43,6 +45,14 @@ export const me = () => {
   return fetch(`${apiUrl}/me`, { credentials: 'include' }).then((res) => res.json())
 }
 
+export const getUser = (id) => {
+  return fetch(`${apiUrl}/users/${id}`, {
+    credentials: 'include',
+  })
+    .then((res) => res.json())
+    .then((data) => data.foundUser)
+}
+
 export const updateUser = ({ username, email, calorieLimit, image, id }) => {
   return fetch(`${apiUrl}/users/${id}`, {
     method: 'PUT',
@@ -51,5 +61,12 @@ export const updateUser = ({ username, email, calorieLimit, image, id }) => {
     headers: {
       'Content-Type': 'application/json',
     },
+  })
+}
+
+export const deleteUser = (id) => {
+  return fetch(`${apiUrl}/users/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
   })
 }
