@@ -73,19 +73,21 @@ export const createUser = async (req, res, next) => {
 export const updateUser = async (req, res, next) => {
   try {
     const id = req.params.id
-    const { username, email, calorieLimit, image, fileName } = req.body
+    const { username, email, calorieLimit, image } = req.body
 
     if (id !== req.user.id && [ROLES.User].includes(req.user.role)) {
       return res.status(403).json({})
-    } else {
-      const updatedUser = await Users.findByIdAndUpdate(
-        id,
-        { username, email, calorieLimit, image, fileName },
-        { new: true }
-      )
-      req.session.user = updatedUser
-      res.status(200).json()
     }
+    const updatedUser = await Users.findByIdAndUpdate(
+      id,
+      { username, email, calorieLimit, image },
+      { new: true }
+    )
+    if (req.session.user.id === updatedUser.id) {
+      req.session.user = updatedUser
+    }
+
+    res.status(200).json()
   } catch (error) {
     next(error.message)
   }
