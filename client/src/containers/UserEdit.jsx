@@ -7,7 +7,7 @@ import { useGetUser } from '../hooks/use-get-user'
 import { styled } from '../stitches.config'
 import { useEditUser } from '../hooks/use-edit-user'
 
-const ProfilePageWrapper = styled('div', {
+const UsersPageWrapper = styled('div', {
   display: 'flex',
   justifyContent: 'space-evenly',
   '@mobile': {
@@ -190,7 +190,7 @@ function EditForm({ userDetails, isFetching }) {
           <SpinIcon />
         </Spinner>
       )}
-      <ProfilePageWrapper>
+      <UsersPageWrapper>
         <Avatar>
           <Picture>
             {Boolean(userDetails.image) != null ? (
@@ -230,7 +230,7 @@ function EditForm({ userDetails, isFetching }) {
             </ActionButtonWrapper>
           </Form>
         </UserDetails>
-      </ProfilePageWrapper>
+      </UsersPageWrapper>
     </>
   )
 }

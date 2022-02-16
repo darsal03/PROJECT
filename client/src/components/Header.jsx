@@ -16,7 +16,7 @@ function Avatar({ onClick }) {
   )
 }
 
-function AvatarBox({ user, onClick, onClickOutside, onNavigate }) {
+function AvatarBox({ user, onClick, onClickOutside }) {
   const modalRef = useRef()
 
   useClickOutside(modalRef, onClickOutside)
@@ -29,7 +29,7 @@ function AvatarBox({ user, onClick, onClickOutside, onNavigate }) {
         </MenuItem>
         {user.role === 'admin' || user.role === 'moderator' ? (
           <MenuItem>
-            <button onClick={onNavigate}>Users</button>
+            <Link to="/users">Users Page</Link>
           </MenuItem>
         ) : null}
         <MenuItem>
@@ -53,14 +53,9 @@ function NonAuthNav() {
 function AuthNav({ user }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { logout } = useAuth()
-  const navigate = useNavigate()
 
   const handleModalToggle = () => {
     setIsModalOpen(!isModalOpen)
-  }
-
-  const handleNavigate = () => {
-    navigate('/users')
   }
 
   return (
@@ -70,12 +65,7 @@ function AuthNav({ user }) {
       </Link>
       <Avatar onClick={handleModalToggle} />
       {isModalOpen && (
-        <AvatarBox
-          user={user}
-          onNavigate={handleNavigate}
-          onClick={logout}
-          onClickOutside={() => setIsModalOpen(false)}
-        />
+        <AvatarBox user={user} onClick={logout} onClickOutside={() => setIsModalOpen(false)} />
       )}
     </nav>
   )
@@ -85,7 +75,7 @@ export default function Header() {
   const { user } = useAuth()
 
   return (
-    <StyledHeader auth={user ? true : false}>
+    <StyledHeader auth={Boolean(user)}>
       {user ? <AuthNav user={user} /> : <NonAuthNav />}
     </StyledHeader>
   )
