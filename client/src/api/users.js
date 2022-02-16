@@ -3,7 +3,7 @@ const apiUrl = process.env.REACT_APP_API_BASE_URL
 export const getUsers = () => {
   return fetch(`${apiUrl}/users`, { credentials: 'include' })
     .then((res) => res.json())
-    .then((data) => data.foundUsers)
+    .then((data) => data)
 }
 
 export const createUser = ({ username, email, password }) => {

@@ -11,7 +11,7 @@ export const getUsers = async (req, res, next) => {
     const foundUsers = await Users.find()
 
     if (foundUsers) {
-      res.status(200).json({ foundUsers })
+      res.status(200).json(foundUsers)
     } else {
       return res.status(404).json({})
     }
