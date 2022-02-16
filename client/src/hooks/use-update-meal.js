@@ -5,6 +5,6 @@ export function useUpdateMeal() {
   const queryClient = useQueryClient()
 
   return useMutation(updateMeal, {
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: 'meals' }),
+    onSuccess: () => queryClient.invalidateQueries('meals'),
   })
 }

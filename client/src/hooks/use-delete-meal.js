@@ -5,6 +5,6 @@ export function useDeleteMeal() {
   const queryClient = useQueryClient()
 
   return useMutation(deleteMeal, {
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: 'meals' }),
+    onSuccess: () => queryClient.invalidateQueries('meals'),
   })
 }

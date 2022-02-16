@@ -6,7 +6,7 @@ export function useEditUser() {
   const queryClient = useQueryClient()
   return useMutation(updateUser, {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user'] })
+      queryClient.invalidateQueries('user')
     },
   })
 }
