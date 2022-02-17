@@ -1,9 +1,11 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 
-import { useAuth } from '../contexts/auth'
+import { UserEdit } from './UserEdit'
 import { AuthContainer } from './Login'
+import { UsersPage } from './UsersPage'
 import { Meals } from './Meals'
+import { useAuth } from '../contexts/auth'
 import { NotFound } from '../components/NotFound'
 import { ProfilePage } from '../containers/ProfilePage'
 
@@ -18,12 +20,20 @@ function UnAuthApp() {
   )
 }
 
-function AuthApp() {
+function AuthApp({ user }) {
   return (
     <>
       <Routes>
         <Route path="/" element={<Meals />}></Route>
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/profile" element={<ProfilePage />}></Route>
+        {(user.role === 'admin' || user.role === 'moderator') && (
+          <>
+            <Route path="/users" element={<UsersPage />} />
+            <Route path="/user">
+              <Route path=":id" element={<UserEdit />} />
+            </Route>
+          </>
+        )}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
@@ -33,5 +43,5 @@ function AuthApp() {
 export function Content() {
   const { user } = useAuth()
 
-  return <>{user ? <AuthApp /> : <UnAuthApp />}</>
+  return <>{user ? <AuthApp user={user} /> : <UnAuthApp />}</>
 }

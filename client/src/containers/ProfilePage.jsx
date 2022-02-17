@@ -50,7 +50,7 @@ const UserName = styled('h1', {
   },
 })
 
-const UserDets = styled('div', {
+const UserDetails = styled('div', {
   margin: '10rem 30rem 0 0 ',
   padding: '0rem 10rem',
   borderRadius: '2rem',
@@ -172,7 +172,7 @@ export function ProfilePage() {
         </Picture>
         <UserName>{user.username}</UserName>
       </Avatar>
-      <UserDets>
+      <UserDetails>
         <UserDetailsHeading>User Info</UserDetailsHeading>
         <Form onSubmit={handleSubmit}>
           <Label htmlFor="username">Username:</Label>
@@ -210,7 +210,7 @@ export function ProfilePage() {
             Save
           </FormButton>
         </Form>
-      </UserDets>
+      </UserDetails>
     </ProfilePageWrapper>
   )
 }

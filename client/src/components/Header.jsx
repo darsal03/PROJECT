@@ -1,6 +1,6 @@
 import { keyframes } from '@stitches/react'
 import React, { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../contexts/auth'
 import { useClickOutside } from '../hooks/use-click-outside'
@@ -16,7 +16,7 @@ function Avatar({ onClick }) {
   )
 }
 
-function AvatarBox({ onClick, onClickOutside }) {
+function AvatarBox({ user, onClick, onClickOutside }) {
   const modalRef = useRef()
 
   useClickOutside(modalRef, onClickOutside)
@@ -27,6 +27,11 @@ function AvatarBox({ onClick, onClickOutside }) {
         <MenuItem>
           <Link to="/profile">Profile Page</Link>
         </MenuItem>
+        {user.role === 'admin' || user.role === 'moderator' ? (
+          <MenuItem>
+            <Link to="/users">Users Page</Link>
+          </MenuItem>
+        ) : null}
         <MenuItem>
           <button onClick={onClick}>Log Out</button>
         </MenuItem>
@@ -45,9 +50,8 @@ function NonAuthNav() {
   )
 }
 
-function AuthNav() {
+function AuthNav({ user }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
-
   const { logout } = useAuth()
 
   const handleModalToggle = () => {
@@ -60,7 +64,9 @@ function AuthNav() {
         <Logo width="50" height="50" />
       </Link>
       <Avatar onClick={handleModalToggle} />
-      {isModalOpen && <AvatarBox onClick={logout} onClickOutside={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+        <AvatarBox user={user} onClick={logout} onClickOutside={() => setIsModalOpen(false)} />
+      )}
     </nav>
   )
 }
@@ -69,7 +75,9 @@ export default function Header() {
   const { user } = useAuth()
 
   return (
-    <StyledHeader auth={user ? true : false}>{user ? <AuthNav /> : <NonAuthNav />}</StyledHeader>
+    <StyledHeader auth={Boolean(user)}>
+      {user ? <AuthNav user={user} /> : <NonAuthNav />}
+    </StyledHeader>
   )
 }
 

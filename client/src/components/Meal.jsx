@@ -15,7 +15,7 @@ import { useDeleteMeal } from '../hooks/use-delete-meal'
 
 const MealWrapper = styled('div', {
   width: '30rem',
-  height: '35rem',
+  height: 'fit-content',
   margin: '2rem 3rem ',
   borderRadius: '0.5rem',
   boxShadow: ' 0 0.5rem 1.1rem rgba(0.35, 0.35, 0.35, 0.35)',
