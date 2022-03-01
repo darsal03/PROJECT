@@ -155,10 +155,10 @@ function MealDetails({ meal, calorieExceeds, onDeleteMeal, onEditOpen }) {
         </CalorieText>
       </MealDetail>
       <ButtonWrapper>
-        <ActionButton onClick={onEditOpen}>
+        <ActionButton aria-label="Update meal" onClick={onEditOpen}>
           <EditButton />{' '}
         </ActionButton>
-        <ActionButton onClick={handleDeleteMeal}>
+        <ActionButton aria-label="Delete meal" onClick={handleDeleteMeal}>
           <DeleteIcon />{' '}
         </ActionButton>
       </ButtonWrapper>
@@ -171,18 +171,25 @@ function EditMeal({ meal, onEditClose, onInputChange, onUpdateMeal, onDateChange
     <FormWrapper>
       <Form onSubmit={(event) => onUpdateMeal(event, meal)}>
         <Label htmlFor="name">Name:</Label>
-        <Input name="name" value={meal.name} onChange={onInputChange} />
+        <Input id="name" name="name" value={meal.name} onChange={onInputChange} />
         <Label htmlFor="date">Date:</Label>
         <DateTimePicker
           clearable
           ampm
+          id="date"
           name="date"
           value={meal.date}
           onChange={onDateChange}
           renderInput={(params) => <TextField {...params} />}
         />
         <Label htmlFor="calories">Calories:</Label>
-        <Input type="number" name="calories" value={meal.calories} onChange={onInputChange} />
+        <Input
+          id="calories"
+          type="number"
+          name="calories"
+          value={meal.calories}
+          onChange={onInputChange}
+        />
         <ButtonWrapper>
           <FormButton onClick={onEditClose}>Cancel Edit</FormButton>
           <FormButton>Update</FormButton>
