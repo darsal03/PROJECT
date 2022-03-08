@@ -6,8 +6,6 @@ import * as mockAddMeal from '../../hooks/use-add-meal'
 
 jest.mock('../../hooks/use-add-meal')
 
-afterEach(() => jest.clearAllMocks())
-
 describe('AddMeal', () => {
   it('renders default state', () => {
     const mutateFn = jest.fn()
