@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import TextField from '@mui/material/TextField'
-import { DateTimePicker } from '@mui/lab'
+import { DesktopDateTimePicker } from '@mui/lab'
 import isValid from 'date-fns/isValid'
 import getTime from 'date-fns/getTime'
 
@@ -111,9 +111,10 @@ function AddMealForm({ onAddMealClose, onInputChage, onDateChange, onSubmit, mea
     <FormWrapper>
       <Form onSubmit={onSubmit}>
         <Label htmlFor="name">Name:</Label>
-        <Input name="name" value={meal.name} onChange={onInputChage} />
+        <Input id="name" name="name" value={meal.name} onChange={onInputChage} />
         <Label htmlFor="date">Date:</Label>
-        <DateTimePicker
+        <DesktopDateTimePicker
+          id="date"
           clearable
           ampm
           name="date"
@@ -122,7 +123,13 @@ function AddMealForm({ onAddMealClose, onInputChage, onDateChange, onSubmit, mea
           renderInput={(params) => <TextField {...params} />}
         />
         <Label htmlFor="calories">Calories:</Label>
-        <Input type="number" name="calories" value={meal.calories} onChange={onInputChage} />
+        <Input
+          id="calories"
+          type="number"
+          name="calories"
+          value={meal.calories}
+          onChange={onInputChage}
+        />
         <ButtonWrapper>
           <FormButton onClick={onAddMealClose}>Cancel</FormButton>
           <FormButton>Add</FormButton>
